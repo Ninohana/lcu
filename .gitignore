@@ -1,0 +1,40 @@
+# .gitignore for Go projects
+
+# Build artifacts
+_dist/
+_build/
+_out/
+bin/
+pkg/
+target/
+
+# Go specific build artifacts
+.obj/
+.go-work/
+.gopath/
+.gotmp/
+# go mod and go sum files are usually not ignored
+# but you might want to if you're not using them
+#go.mod
+#go.sum
+
+# IDEs and editors
+.idea/
+*.swo
+*.swp
+*.swx
+*.log
+*.tmp
+*.bak
+*.rej
+*.orig
+*.synctex.gz
+*~ # Emacs and others temp files
+
+# OS generated
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Coverage profiles
+.coverprofile
