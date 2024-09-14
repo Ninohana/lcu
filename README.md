@@ -8,6 +8,7 @@ github.com/Ninohana/lol -  封装完好的LCU API库，及SGP支持
  - 通过召唤师名称获取召唤师信息（SGP）
  - 检查召唤师名称是否可用（有重复）
  - 通过puuid获取jwt
+ - 观战
 
 # 快速开始
 
