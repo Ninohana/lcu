@@ -7,34 +7,52 @@ package lol
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 )
 
 const remain = "Go!!!!!!!!!"
 
-func httpGet(client http.Client, url string) []byte {
+type ErrorResponse struct {
+	ErrorCode             string      `json:"errorCode"`
+	HttpStatus            int         `json:"httpStatus"`
+	ImplementationDetails interface{} `json:"implementationDetails"`
+	Message               string      `json:"message"`
+}
+
+func httpGet(client http.Client, url string) ([]byte, *ErrorResponse) {
 	req, _ := http.NewRequest("GET", url, nil)
 	resp, err := client.Do(req)
-	if resp == nil || err != nil {
-		fmt.Println("请求失败")
+	if resp == nil {
 		panic(err)
 	}
 	defer func(Body io.ReadCloser) {
 		_ = Body.Close()
 	}(resp.Body)
 	body, _ := io.ReadAll(resp.Body)
-	return body
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		errRes := &ErrorResponse{}
+		_ = json.Unmarshal(body, errRes)
+		return nil, errRes
+	}
+	return body, nil
 }
 
-func httpPost(client http.Client, url string, payload map[string]interface{}) []byte {
+func httpPost(client http.Client, url string, payload map[string]interface{}) ([]byte, *ErrorResponse) {
 	payloadBytes, _ := json.Marshal(payload)
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(payloadBytes))
-	resp, _ := client.Do(req)
+	resp, err := client.Do(req)
+	if resp == nil {
+		panic(err)
+	}
 	defer func(Body io.ReadCloser) {
 		_ = Body.Close()
 	}(resp.Body)
 	body, _ := io.ReadAll(resp.Body)
-	return body
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		errRes := &ErrorResponse{}
+		_ = json.Unmarshal(body, errRes)
+		return nil, errRes
+	}
+	return body, nil
 }

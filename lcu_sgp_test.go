@@ -11,49 +11,77 @@ import (
 	"testing"
 )
 
-func prettyPrintJson(data map[string]interface{}) {
-	jsonData, _ := json.MarshalIndent(data, "", "  ")
-	fmt.Println(string(jsonData))
+func prettyPrint(v any) {
+	prettyJson, _ := json.MarshalIndent(v, "", "  ")
+	fmt.Println(string(prettyJson))
 }
 
-func prettyPrintJsonWithTag(tag string, data map[string]interface{}) {
+func prettyPrintWithTag(tag string, v any) {
 	fmt.Printf("=========%s=========\n", tag)
-	prettyPrintJson(data)
+	prettyPrint(v)
 	fmt.Printf("=========%s=========\n", strings.Repeat("==", len(tag)/3))
 }
 func TestNewLcuClient(t *testing.T) {
-	lcu := NewLcuClient("57851", BasicAuth{"riot", "R1aBr6N1bmBaTS_D0g5sjw"})
+	lcu := NewLcuClient("55378", BasicAuth{"riot", "WleZotZkvvdIHcUfT9Pa4Q"})
 
-	prettyPrintJsonWithTag("LCU获取召唤师信息", lcu.GetSummonerByName("我玉玉了#55165")) // 班德尔城，大佬带带我
+	summoner, err := lcu.GetSummonerByName("我玉玉了#55165") // 班德尔城，大佬带带我
+	if err != nil {
+		t.Error(err)
+	}
+	prettyPrint(summoner)
 
-	lcu.StartWebsocket(nil, nil)
-	err := lcu.Subscribe("OnJsonApiEvent", func(data interface{}) {
+	_ = lcu.StartWebsocket(nil, nil)
+	//_ = lcu.StartWebsocket(func(err error) {
+	//	panic(err)
+	//}, func(message string) bool {
+	//	fmt.Println(message)
+	//	return true
+	//})
+	err = lcu.Subscribe("OnJsonApiEvent", func(data interface{}) {
 		fmt.Println(data)
 	})
 	if err != nil {
-		t.Errorf("subscribe failed")
+		t.Errorf("订阅失败")
 	}
 
-	//err = lcu.Unsubscribe("OnJsonApiEvent")
-	//if err != nil {
-	//	panic(err)
-	//}
+	err = lcu.Unsubscribe("OnJsonApiEvent")
+	if err != nil {
+		t.Errorf("取消订阅失败")
+	}
 }
 
 func TestNewSgpClient(t *testing.T) {
-	lcu := NewLcuClient("57851", BasicAuth{"riot", "R1aBr6N1bmBaTS_D0g5sjw"})
+	lcu := NewLcuClient("55378", BasicAuth{"riot", "WleZotZkvvdIHcUfT9Pa4Q"})
 
-	sgpToken := lcu.GetSgpToken()
+	sgpToken, _ := lcu.GetSgpToken()
+	sgp := NewSgpClient(sgpToken.AccessToken, HN10)
 
-	sgp := NewSgpClient(sgpToken.AccessToken, Region{
-		Code:     "cq100",
-		Endpoint: "https://cq100-sgp.lol.qq.com:21019",
-		Name:     "班德尔城",
-	})
+	summoner, err := sgp.GetSummonerByName("我玉玉了")
+	if err != nil {
+		t.Error(err)
+	} else {
+		prettyPrint(summoner)
 
-	prettyPrintJsonWithTag("SGP获取召唤师信息", sgp.GetSummonerByName("我玉玉了"))
-	prettyPrintJsonWithTag("获取正在发生的对局信息", sgp.GetGamingInfoByPuuid("c9ea4cd2-fd41-5656-b615-49056d444271"))
-	fmt.Println(sgp.GetJwtByPuuid("c9ea4cd2-fd41-5656-b615-49056d444271"))
-	fmt.Println(sgp.CheckName("我玉玉了"))
+		gamingInfo, err := sgp.GetGamingInfoByPuuid(summoner.Puuid)
+		if err != nil {
+			t.Error(err)
+		} else {
+			prettyPrintWithTag("获取正在发生的对局信息", gamingInfo)
+		}
+
+		jwt, err := sgp.GetJwtByPuuid(summoner.Puuid)
+		if err != nil {
+			t.Error(err)
+		} else {
+			fmt.Println(jwt)
+		}
+	}
+
+	isValid, err := sgp.CheckName("我玉玉了")
+	if err != nil {
+		t.Error(err)
+	} else {
+		fmt.Println("名字不重复？", isValid)
+	}
 	sgp.RefreshToken()
 }

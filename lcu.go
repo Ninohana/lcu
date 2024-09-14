@@ -74,18 +74,24 @@ type SgpToken struct {
 	Token       string `json:"token"`
 }
 
-func (lcu *Lcu) GetSgpToken() (token SgpToken) {
-	res := httpGet(*lcu.Client, "/entitlements/v1/token")
+func (lcu *Lcu) GetSgpToken() (token *SgpToken, err error) {
+	res, errRes := httpGet(*lcu.Client, "/entitlements/v1/token")
+	if errRes != nil {
+		return nil, &ResponseError{Message: errRes.Message}
+	}
 	_ = json.Unmarshal(res, &token)
-	return token
+	return token, nil
 }
 
 // GetSummonerByName 通过召唤师名称获取召唤师信息。
-func (lcu *Lcu) GetSummonerByName(name string) (data map[string]interface{}) {
+func (lcu *Lcu) GetSummonerByName(name string) (summoner *Summoner, err error) {
 	path := fmt.Sprintf("/lol-summoner/v1/summoners?name=%s", url.QueryEscape(name))
-	res := httpGet(*lcu.Client, path)
-	_ = json.Unmarshal(res, &data)
-	return data
+	res, errRes := httpGet(*lcu.Client, path)
+	if errRes != nil {
+		return nil, &ResponseError{Message: errRes.Message}
+	}
+	_ = json.Unmarshal(res, &summoner)
+	return summoner, nil
 }
 
 type lcuWebsocket struct {
@@ -192,4 +198,34 @@ func (ws lcuWebsocket) listen() {
 		ws.dispatcher[(*proto)[1].(string)]((*proto)[2])
 	}
 	ws.conn.Close()
+}
+
+// ResponseError 接口返回的错误信息。
+type ResponseError struct {
+	Message string
+}
+
+func (error ResponseError) Error() string {
+	return error.Message
+}
+
+// Spectate 观战。
+//
+// summonerName: 召唤师名称
+// puuid: puuid
+//
+// 返回接口返回
+func (lcu *Lcu) Spectate(name string, tagline string, puuid string) (isSuccess bool, err error) {
+	url := "/lol-spectator/v1/spectate/launch"
+	payload := map[string]interface{}{
+		"allowObserveMode":     "ALL",
+		"dropInSpectateGameId": fmt.Sprintf("%s#%s", name, tagline),
+		"gameQueueType":        "",
+		"puuid":                puuid,
+	}
+	res, errRes := httpPost(*lcu.Client, url, payload)
+	if errRes != nil {
+		return false, &ResponseError{Message: errRes.Message}
+	}
+	return len(res) == 0, nil
 }
