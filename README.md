@@ -22,8 +22,8 @@ import "github.com/Ninohana/lol"
 lcu := NewLcuClient("62529", BasicAuth{"riot", "JDJE18RKuT3fldK5yc2xuA"})
 
 // 获取召唤师信息
-summonerInfo := lcu.GetSummonerByName("我玉玉了#55165")
-fmt.Println(summonerInfo)
+summoner, _ := lcu.GetSummonerByName("我玉玉了#55165")
+fmt.Println(summoner)
 
 // 开启长连接
 lcu.StartWebsocket(nil, nil)
@@ -33,7 +33,7 @@ lcu.Subscribe("OnJsonApiEvent", func(data interface{}) {
 })
 
 // 创建SGP客户端
-sgpToken := lcu.GetSgpToken() // 获取token
+sgpToken, _ := lcu.GetSgpToken() // 获取token
 sgp := NewSgpClient(sgpToken.AccessToken, Region{
 		Code:     "cq100",
 		Endpoint: "https://cq100-sgp.lol.qq.com:21019",
@@ -41,5 +41,6 @@ sgp := NewSgpClient(sgpToken.AccessToken, Region{
 })
 
 // 获取正在发生的对局信息
-sgp.GetGamingInfoByPuuid("c9ea4cd2-fd41-5656-b615-49056d444271")
+gamingInfo, _ := sgp.GetGamingInfoByPuuid(summoner.Puuid)
+fmt.Println(gamingInfo)
 ```
