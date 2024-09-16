@@ -16,7 +16,7 @@ func TestLcu_getServiceEndpoint(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := lcu.getServiceEndpoint()
+			got, err := lcu.GetServiceEndpoint()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getServiceEndpoint() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -38,7 +38,7 @@ func TestLcu_getPlatformId(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := lcu.getPlatformId()
+			got, err := lcu.GetPlatformId()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getPlatformId() error = %v, wantErr %v", err, tt.wantErr)
 				return

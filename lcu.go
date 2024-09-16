@@ -231,7 +231,7 @@ func (lcu *Lcu) Spectate(name string, tagline string, puuid string) (isSuccess b
 	return len(res) == 0, nil
 }
 
-func (lcu *Lcu) getServiceEndpoint() (string, error) {
+func (lcu *Lcu) GetServiceEndpoint() (string, error) {
 	url := "/lol-platform-config/v1/namespaces/PlayerPreferences/ServiceEndpoint"
 	res, errRes := httpGet(*lcu.Client, url)
 	if errRes != nil {
@@ -240,7 +240,7 @@ func (lcu *Lcu) getServiceEndpoint() (string, error) {
 	return strings.ReplaceAll(string(res), `"`, ""), nil
 }
 
-func (lcu *Lcu) getPlatformId() (string, error) {
+func (lcu *Lcu) GetPlatformId() (string, error) {
 	url := "/lol-platform-config/v1/namespaces/LoginDataPacket/platformId"
 	res, errRes := httpGet(*lcu.Client, url)
 	if errRes != nil {
