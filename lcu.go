@@ -231,20 +231,29 @@ func (lcu *Lcu) Spectate(name string, tagline string, puuid string) (isSuccess b
 	return len(res) == 0, nil
 }
 
-func (lcu *Lcu) GetServiceEndpoint() (string, error) {
+// GetServiceEndpoint 获取SGP服务地址。
+//
+// 出错打印错误信息并返回空字符串
+func (lcu *Lcu) GetServiceEndpoint() string {
 	url := "/lol-platform-config/v1/namespaces/PlayerPreferences/ServiceEndpoint"
 	res, errRes := httpGet(*lcu.Client, url)
 	if errRes != nil {
-		return "", &ResponseError{Message: errRes.Message}
+		fmt.Println(&ResponseError{Message: errRes.Message})
+		return ""
 	}
-	return strings.ReplaceAll(string(res), `"`, ""), nil
+	return strings.ReplaceAll(string(res), `"`, "")
 }
 
-func (lcu *Lcu) GetPlatformId() (string, error) {
+// GetPlatformId 获取平台ID。
+// 形如 "HN10" "CQ100"
+//
+// 出错打印错误信息并返回空字符串
+func (lcu *Lcu) GetPlatformId() string {
 	url := "/lol-platform-config/v1/namespaces/LoginDataPacket/platformId"
 	res, errRes := httpGet(*lcu.Client, url)
 	if errRes != nil {
-		return "", &ResponseError{Message: errRes.Message}
+		fmt.Println(&ResponseError{Message: errRes.Message})
+		return ""
 	}
-	return strings.ReplaceAll(string(res), `"`, ""), nil
+	return strings.ReplaceAll(string(res), `"`, "")
 }
