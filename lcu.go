@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/websocket"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 // Lcu 封装了 League Client API
@@ -228,4 +229,22 @@ func (lcu *Lcu) Spectate(name string, tagline string, puuid string) (isSuccess b
 		return false, &ResponseError{Message: errRes.Message}
 	}
 	return len(res) == 0, nil
+}
+
+func (lcu *Lcu) getServiceEndpoint() (string, error) {
+	url := "/lol-platform-config/v1/namespaces/PlayerPreferences/ServiceEndpoint"
+	res, errRes := httpGet(*lcu.Client, url)
+	if errRes != nil {
+		return "", &ResponseError{Message: errRes.Message}
+	}
+	return strings.ReplaceAll(string(res), `"`, ""), nil
+}
+
+func (lcu *Lcu) getPlatformId() (string, error) {
+	url := "/lol-platform-config/v1/namespaces/LoginDataPacket/platformId"
+	res, errRes := httpGet(*lcu.Client, url)
+	if errRes != nil {
+		return "", &ResponseError{Message: errRes.Message}
+	}
+	return strings.ReplaceAll(string(res), `"`, ""), nil
 }

@@ -22,8 +22,6 @@ func prettyPrintWithTag(tag string, v any) {
 	fmt.Printf("=========%s=========\n", strings.Repeat("==", len(tag)/3))
 }
 func TestNewLcuClient(t *testing.T) {
-	lcu := NewLcuClient("55378", BasicAuth{"riot", "WleZotZkvvdIHcUfT9Pa4Q"})
-
 	summoner, err := lcu.GetSummonerByName("我玉玉了#55165") // 班德尔城，大佬带带我
 	if err != nil {
 		t.Error(err)
@@ -51,10 +49,8 @@ func TestNewLcuClient(t *testing.T) {
 }
 
 func TestNewSgpClient(t *testing.T) {
-	lcu := NewLcuClient("55378", BasicAuth{"riot", "WleZotZkvvdIHcUfT9Pa4Q"})
-
 	sgpToken, _ := lcu.GetSgpToken()
-	sgp := NewSgpClient(sgpToken.AccessToken, HN10)
+	sgp := NewSgpClient(sgpToken.AccessToken, CQ100)
 
 	summoner, err := sgp.GetSummonerByName("我玉玉了")
 	if err != nil {
@@ -83,5 +79,5 @@ func TestNewSgpClient(t *testing.T) {
 	} else {
 		fmt.Println("名字不重复？", isValid)
 	}
-	sgp.RefreshToken()
+	//sgp.RefreshToken()
 }
