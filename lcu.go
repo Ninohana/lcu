@@ -185,6 +185,7 @@ func (ws lcuWebsocket) listen() {
 		_, message, err := ws.conn.ReadMessage()
 		if err != nil {
 			ws.onError(err)
+			continue
 		}
 
 		proto := new([]interface{})
@@ -213,6 +214,7 @@ func (error ResponseError) Error() string {
 // Spectate 观战。
 //
 // summonerName: 召唤师名称
+//
 // puuid: puuid
 //
 // 返回接口返回
@@ -232,14 +234,14 @@ func (lcu *Lcu) Spectate(name string, tagline string, puuid string) (isSuccess b
 }
 
 // GetServiceEndpoint 获取SGP服务地址。
+// 形如 "https://cq100-sgp.lol.qq.com:21019"
 //
-// 出错打印错误信息并返回空字符串
+// panic: 获取失败
 func (lcu *Lcu) GetServiceEndpoint() string {
 	url := "/lol-platform-config/v1/namespaces/PlayerPreferences/ServiceEndpoint"
 	res, errRes := httpGet(*lcu.Client, url)
 	if errRes != nil {
-		fmt.Println(&ResponseError{Message: errRes.Message})
-		return ""
+		panic(&ResponseError{Message: errRes.Message})
 	}
 	return strings.ReplaceAll(string(res), `"`, "")
 }
@@ -247,13 +249,12 @@ func (lcu *Lcu) GetServiceEndpoint() string {
 // GetPlatformId 获取平台ID。
 // 形如 "HN10" "CQ100"
 //
-// 出错打印错误信息并返回空字符串
+// panic: 获取失败
 func (lcu *Lcu) GetPlatformId() string {
 	url := "/lol-platform-config/v1/namespaces/LoginDataPacket/platformId"
 	res, errRes := httpGet(*lcu.Client, url)
 	if errRes != nil {
-		fmt.Println(&ResponseError{Message: errRes.Message})
-		return ""
+		panic(&ResponseError{Message: errRes.Message})
 	}
 	return strings.ReplaceAll(string(res), `"`, "")
 }
