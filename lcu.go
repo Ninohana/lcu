@@ -258,3 +258,33 @@ func (lcu *Lcu) GetPlatformId() string {
 	}
 	return strings.ReplaceAll(string(res), `"`, "")
 }
+
+func (lcu *Lcu) GetReplaysConfiguration() (configuration *ReplaysConfigurationV1, err error) {
+	url := "/lol-replays/v1/configuration"
+	res, errRes := httpGet(*lcu.Client, url)
+	if errRes != nil {
+		return nil, &ResponseError{Message: errRes.Message}
+	}
+	_ = json.Unmarshal(res, &configuration)
+	return configuration, nil
+}
+
+// GetRoflsPath 获取回放文件保存路径。
+func (lcu *Lcu) GetRoflsPath() string {
+	url := "/lol-replays/v1/rofls/path"
+	res, errRes := httpGet(*lcu.Client, url)
+	if errRes != nil {
+		panic(&ResponseError{Message: errRes.Message})
+	}
+	return strings.ReplaceAll(string(res), `"`, "")
+}
+
+// GetRoflsDefaultPath 获取回放文件保存路径。
+func (lcu *Lcu) GetRoflsDefaultPath() string {
+	url := "/lol-replays/v1/rofls/path/default"
+	res, errRes := httpGet(*lcu.Client, url)
+	if errRes != nil {
+		panic(&ResponseError{Message: errRes.Message})
+	}
+	return strings.ReplaceAll(string(res), `"`, "")
+}

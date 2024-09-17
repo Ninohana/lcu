@@ -115,3 +115,17 @@ type GamingInfo struct {
 		GameCreateDate        int64  `json:"gameCreateDate"`
 	} `json:"playerCredentials"`
 }
+
+type ReplaysConfigurationV1 struct {
+	GameVersion                      string `json:"gameVersion"`
+	IsInTournament                   bool   `json:"isInTournament"`
+	IsLoggedIn                       bool   `json:"isLoggedIn"`
+	IsPatching                       bool   `json:"isPatching"`
+	IsPlayingGame                    bool   `json:"isPlayingGame"`
+	IsPlayingReplay                  bool   `json:"isPlayingReplay"`
+	IsReplaysEnabled                 bool   `json:"isReplaysEnabled"`
+	IsReplaysForEndOfGameEnabled     bool   `json:"isReplaysForEndOfGameEnabled"`
+	IsReplaysForMatchHistoryEnabled  bool   `json:"isReplaysForMatchHistoryEnabled"`
+	MinServerVersion                 string `json:"minServerVersion"`
+	MinutesUntilReplayConsideredLost int    `json:"minutesUntilReplayConsideredLost"`
+}
