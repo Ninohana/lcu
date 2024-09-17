@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var lcu = NewLcuClient("61563", BasicAuth{"riot", "MtTLGA_EQXPGKOHEu4c_tQ"})
+var lcu = NewLcuClient("58566", BasicAuth{"riot", "G_0ULX5QpOkXh9G98MYAjQ"})
 
 func TestLcu_getServiceEndpoint(t *testing.T) {
 	tests := []struct {
@@ -92,6 +92,62 @@ func TestLcu_GetRoflsDefaultPath(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := lcu.GetRoflsDefaultPath(); (len(got) == 0) == tt.wantNotNil {
 				t.Errorf("GetRoflsPath() = %v, want %v", got, tt.wantNotNil)
+			}
+		})
+	}
+}
+
+func TestLcu_GetSummonerGamesByPuuid(t *testing.T) {
+	type args struct {
+		puuid string
+		begin int
+		end   int
+	}
+	tests := []struct {
+		name      string
+		args      args
+		wantGames bool
+		wantErr   bool
+	}{
+		{"base", args{"c9ea4cd2-fd41-5656-b615-49056d444271", 0, 4}, true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotGames, err := lcu.GetSummonerGamesByPuuid(tt.args.puuid, tt.args.begin, tt.args.end)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetSummonerGamesByPuuid() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			//prettyPrint(gotGames)
+			if gotGames == nil == tt.wantGames {
+				t.Errorf("GetSummonerGamesByPuuid() gotGames = %v, want %v", gotGames, tt.wantGames)
+			}
+		})
+	}
+}
+
+func TestLcu_GetGameInfoByGameId(t *testing.T) {
+	type args struct {
+		gameId int64
+	}
+	tests := []struct {
+		name      string
+		args      args
+		wantGames bool
+		wantErr   bool
+	}{
+		{"base", args{500203450300}, true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotGames, err := lcu.GetGameInfoByGameId(tt.args.gameId)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetSummonerGamesByPuuid() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			//prettyPrint(gotGames)
+			if gotGames == nil == tt.wantGames {
+				t.Errorf("GetSummonerGamesByPuuid() gotGames = %v, want %v", gotGames, tt.wantGames)
 			}
 		})
 	}

@@ -95,6 +95,44 @@ func (lcu *Lcu) GetSummonerByName(name string) (summoner *Summoner, err error) {
 	return summoner, nil
 }
 
+// GetSummonerByPuuid 通过召唤师puuid获取召唤师信息。
+func (lcu *Lcu) GetSummonerByPuuid(puuid string) (summoner *Summoner, err error) {
+	path := fmt.Sprintf("/lol-summoner/v2/summoners/puuid/%s", puuid)
+	res, errRes := httpGet(*lcu.Client, path)
+	if errRes != nil {
+		return nil, &ResponseError{Message: errRes.Message}
+	}
+	_ = json.Unmarshal(res, &summoner)
+	return summoner, nil
+}
+
+// GetSummonerGamesByPuuid 通过puuid获取召唤师对局信息。
+//
+// begin: 从第多少条开始
+//
+// end: 到第多少条
+func (lcu *Lcu) GetSummonerGamesByPuuid(puuid string, begin int, end int) (games *GamesInfo, err error) {
+	path := fmt.Sprintf(
+		"/lol-match-history/v1/products/lol/%s/matches?begIndex=%d&endIndex=%d",
+		puuid, begin, end)
+	res, errRes := httpGet(*lcu.Client, path)
+	if errRes != nil {
+		return nil, &ResponseError{Message: errRes.Message}
+	}
+	_ = json.Unmarshal(res, &games)
+	return games, nil
+}
+
+func (lcu *Lcu) GetGameInfoByGameId(gameId int64) (game *GameInfo, err error) {
+	path := fmt.Sprintf("/lol-match-history/v1/games/%d", gameId)
+	res, errRes := httpGet(*lcu.Client, path)
+	if errRes != nil {
+		return nil, &ResponseError{Message: errRes.Message}
+	}
+	_ = json.Unmarshal(res, &game)
+	return game, nil
+}
+
 type lcuWebsocket struct {
 	conn             *websocket.Conn
 	onError          func(error)
