@@ -10,9 +10,18 @@ github.com/Ninohana/lol -  一个封装完好的LCU API及SGP支持的Go Mod。
  - 通过puuid获取jwt
  - 观战
  - 获取回放文件
- - 持续添加中……
+
+持续添加中……
 
 # 快速开始
+
+## 命令行方式
+
+```shell
+go get github.com/Ninohana/lol
+```
+
+## 如果使用IDE
 
 Go项目中使用`import`导入即可
 
@@ -26,7 +35,10 @@ import (
 )
 ```
 
-使用示例
+大部分IDE会自动执行导入操作
+
+## 使用示例
+
 ```go
 // 创建LCU客户端
 lcu := NewLcuClient("62529", BasicAuth{"riot", "JDJE18RKuT3fldK5yc2xuA"})
