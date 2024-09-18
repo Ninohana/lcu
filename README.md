@@ -1,6 +1,6 @@
 github.com/Ninohana/lol -  一个封装完好的LCU API及SGP支持的Go Mod。
 
-# 功能
+## 功能
 
  - 订阅客户端事件
  - 获取正在进行的对局信息
@@ -13,15 +13,15 @@ github.com/Ninohana/lol -  一个封装完好的LCU API及SGP支持的Go Mod。
 
 持续添加中……
 
-# 快速开始
+## 快速开始
 
-## 命令行方式
+### 命令行方式
 
 ```shell
 go get github.com/Ninohana/lol
 ```
 
-## 如果使用IDE
+### 如果使用IDE
 
 Go项目中使用`import`导入即可
 
@@ -37,7 +37,7 @@ import (
 
 大部分IDE会自动执行导入操作
 
-## 使用示例
+### 使用示例
 
 ```go
 // 创建LCU客户端
@@ -65,11 +65,11 @@ fmt.Println(gamingInfo)
 
 更详细的使用方法可以查看根目录下的测试类（以_test.go结尾的文件），例：[lcu_sgp_test.go](https://github.com/Ninohana/lol/blob/main/lcu_sgp_test.go)
 
-# 社区共建
+## 社区共建
 
-官方文档庞杂，需要社区的力量，欢迎Issue及PR，帮助改进、完善。
+官方文档庞杂，个人能力渺小，需要社区的力量，欢迎Issue及PR，帮助改进、完善。如果该库能帮到你，还请不吝点个Star，感谢支持！
 
-# 参考链接
+## 参考链接
 
 LCU API官方文档
 
