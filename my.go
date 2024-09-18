@@ -13,7 +13,7 @@ import (
 
 const remain = "Go!!!!!!!!!"
 
-type ErrorResponse struct {
+type errorResponse struct {
 	ErrorCode             string      `json:"errorCode"`
 	HttpStatus            int         `json:"httpStatus"`
 	ImplementationDetails interface{} `json:"implementationDetails"`
@@ -23,17 +23,17 @@ type authSetter interface {
 	setAuth(*http.Request)
 }
 
-type AuthTransport struct {
+type authTransport struct {
 	http.RoundTripper
 	authSetter
 }
 
-func (at AuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+func (at authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	at.setAuth(req)
 	return at.RoundTripper.RoundTrip(req)
 }
 
-func httpGet(client *http.Client, url string) ([]byte, *ErrorResponse) {
+func httpGet(client *http.Client, url string) ([]byte, *errorResponse) {
 	req, _ := http.NewRequest("GET", url, nil)
 	resp, err := client.Do(req)
 	if resp == nil {
@@ -44,14 +44,14 @@ func httpGet(client *http.Client, url string) ([]byte, *ErrorResponse) {
 	}(resp.Body)
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		errRes := &ErrorResponse{}
+		errRes := &errorResponse{}
 		_ = json.Unmarshal(body, errRes)
 		return nil, errRes
 	}
 	return body, nil
 }
 
-func httpPost(client *http.Client, url string, payload map[string]interface{}) ([]byte, *ErrorResponse) {
+func httpPost(client *http.Client, url string, payload map[string]interface{}) ([]byte, *errorResponse) {
 	payloadBytes, _ := json.Marshal(payload)
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(payloadBytes))
 	resp, err := client.Do(req)
@@ -63,7 +63,7 @@ func httpPost(client *http.Client, url string, payload map[string]interface{}) (
 	}(resp.Body)
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		errRes := &ErrorResponse{}
+		errRes := &errorResponse{}
 		_ = json.Unmarshal(body, errRes)
 		return nil, errRes
 	}

@@ -19,7 +19,7 @@ type Lcu struct {
 	Client        *http.Client
 	Port          string
 	Auth          BasicAuth
-	authTransport AuthTransport
+	authTransport authTransport
 	websocket     lcuWebsocket
 }
 
@@ -55,7 +55,7 @@ func NewLcuClient(port string, auth BasicAuth) *Lcu {
 	lcu := new(Lcu)
 	lcu.Port = port
 	lcu.Auth = auth
-	lcu.authTransport = AuthTransport{
+	lcu.authTransport = authTransport{
 		&localTransport{
 			&http.Transport{
 				TLSClientConfig: &tls.Config{

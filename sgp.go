@@ -60,7 +60,7 @@ func NewSgpClient(accessToken string, region Region) *Sgp {
 	sgp.Region = region
 	sgp.Auth = OAuth{accessToken}
 	sgp.Client = &http.Client{
-		Transport: AuthTransport{
+		Transport: authTransport{
 			&http.Transport{
 				TLSClientConfig: &tls.Config{
 					InsecureSkipVerify: true, // 跳过证书验证
