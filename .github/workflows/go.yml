@@ -24,6 +24,6 @@ jobs:
     - name: Build
       run: go build -v ./...
 
-    # Test alaways fail without env
+    # Test always fail without env
     # - name: Test
       # run: go test -v ./...
