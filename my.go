@@ -19,6 +19,16 @@ type errorResponse struct {
 	ImplementationDetails interface{} `json:"implementationDetails"`
 	Message               string      `json:"message"`
 }
+
+// responseError 接口返回的错误信息。
+type responseError struct {
+	Message string
+}
+
+func (error responseError) Error() string {
+	return error.Message
+}
+
 type authSetter interface {
 	setAuth(*http.Request)
 }

@@ -100,7 +100,7 @@ func (sgp *Sgp) GetSummonerByName(name string) (summoner *SummonerViaSgp, err er
 	url := fmt.Sprintf("%s/summoner-ledge/v1/regions/%s/summoners/name/%s", sgp.Region.Endpoint, sgp.Region.Code, name)
 	res, errRes := httpGet(sgp.Client, url)
 	if errRes != nil {
-		return nil, &ResponseError{Message: errRes.Message}
+		return nil, &responseError{Message: errRes.Message}
 	}
 	_ = json.Unmarshal(res, &summoner)
 	return summoner, nil
@@ -111,7 +111,7 @@ func (sgp *Sgp) CheckName(name string) (bool, error) {
 	url := fmt.Sprintf("%s/summoner-ledge/v1/regions/%s/checkname?summonerName=%s", sgp.Region.Endpoint, sgp.Region.Code, name)
 	res, errRes := httpGet(sgp.Client, url)
 	if errRes != nil {
-		return false, &ResponseError{Message: errRes.Message}
+		return false, &responseError{Message: errRes.Message}
 	}
 	isValid, _ := strconv.ParseBool(string(res))
 	return isValid, nil
@@ -124,7 +124,7 @@ func (sgp *Sgp) GetJwtByPuuid(puuid string) (string, error) {
 	url := fmt.Sprintf("%s/summoner-ledge/v1/regions/%s/summoners/puuid/%s/jwt", sgp.Region.Endpoint, sgp.Region.Code, puuid)
 	res, errRes := httpGet(sgp.Client, url)
 	if errRes != nil {
-		return "", &ResponseError{Message: errRes.Message}
+		return "", &responseError{Message: errRes.Message}
 	}
 	return string(res), nil
 }
@@ -134,7 +134,7 @@ func (sgp *Sgp) GetGamingInfoByPuuid(puuid string) (gamingInfo *GamingInfo, err 
 	url := fmt.Sprintf("%s/gsm/v1/ledge/spectator/region/%s/puuid/%s", sgp.Region.Endpoint, sgp.Region.Code, puuid)
 	res, errRes := httpGet(sgp.Client, url)
 	if errRes != nil {
-		return nil, &ResponseError{Message: errRes.Message}
+		return nil, &responseError{Message: errRes.Message}
 	}
 	_ = json.Unmarshal(res, &gamingInfo)
 	return gamingInfo, nil

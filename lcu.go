@@ -70,20 +70,11 @@ func NewLcuClient(port string, auth BasicAuth) *Lcu {
 	return lcu
 }
 
-// ResponseError 接口返回的错误信息。
-type ResponseError struct {
-	Message string
-}
-
-func (error ResponseError) Error() string {
-	return error.Message
-}
-
 // GetSgpToken 获取SGP Token。
 func (lcu *Lcu) GetSgpToken() (token *SgpToken, err error) {
 	res, errRes := httpGet(lcu.Client, "/entitlements/v1/token")
 	if errRes != nil {
-		return nil, &ResponseError{Message: errRes.Message}
+		return nil, &responseError{Message: errRes.Message}
 	}
 	_ = json.Unmarshal(res, &token)
 	return token, nil
@@ -94,7 +85,7 @@ func (lcu *Lcu) GetSummonerByName(name string) (summoner *Summoner, err error) {
 	path := fmt.Sprintf("/lol-summoner/v1/summoners?name=%s", url.QueryEscape(name))
 	res, errRes := httpGet(lcu.Client, path)
 	if errRes != nil {
-		return nil, &ResponseError{Message: errRes.Message}
+		return nil, &responseError{Message: errRes.Message}
 	}
 	_ = json.Unmarshal(res, &summoner)
 	return summoner, nil
@@ -105,7 +96,7 @@ func (lcu *Lcu) GetSummonerByPuuid(puuid string) (summoner *Summoner, err error)
 	path := fmt.Sprintf("/lol-summoner/v2/summoners/puuid/%s", puuid)
 	res, errRes := httpGet(lcu.Client, path)
 	if errRes != nil {
-		return nil, &ResponseError{Message: errRes.Message}
+		return nil, &responseError{Message: errRes.Message}
 	}
 	_ = json.Unmarshal(res, &summoner)
 	return summoner, nil
@@ -122,7 +113,7 @@ func (lcu *Lcu) GetSummonerGamesByPuuid(puuid string, begin int, end int) (games
 		puuid, begin, end)
 	res, errRes := httpGet(lcu.Client, path)
 	if errRes != nil {
-		return nil, &ResponseError{Message: errRes.Message}
+		return nil, &responseError{Message: errRes.Message}
 	}
 	_ = json.Unmarshal(res, &games)
 	return games, nil
@@ -132,7 +123,7 @@ func (lcu *Lcu) GetGameInfoByGameId(gameId int64) (game *GameInfo, err error) {
 	path := fmt.Sprintf("/lol-match-history/v1/games/%d", gameId)
 	res, errRes := httpGet(lcu.Client, path)
 	if errRes != nil {
-		return nil, &ResponseError{Message: errRes.Message}
+		return nil, &responseError{Message: errRes.Message}
 	}
 	_ = json.Unmarshal(res, &game)
 	return game, nil
@@ -155,7 +146,7 @@ func (lcu *Lcu) Spectate(name string, tagline string, puuid string) (isSuccess b
 	}
 	res, errRes := httpPost(lcu.Client, url, payload)
 	if errRes != nil {
-		return false, &ResponseError{Message: errRes.Message}
+		return false, &responseError{Message: errRes.Message}
 	}
 	return len(res) == 0, nil
 }
@@ -168,7 +159,7 @@ func (lcu *Lcu) GetServiceEndpoint() string {
 	url := "/lol-platform-config/v1/namespaces/PlayerPreferences/ServiceEndpoint"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
-		panic(&ResponseError{Message: errRes.Message})
+		panic(&responseError{Message: errRes.Message})
 	}
 	return strings.ReplaceAll(string(res), `"`, "")
 }
@@ -181,7 +172,7 @@ func (lcu *Lcu) GetPlatformId() string {
 	url := "/lol-platform-config/v1/namespaces/LoginDataPacket/platformId"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
-		panic(&ResponseError{Message: errRes.Message})
+		panic(&responseError{Message: errRes.Message})
 	}
 	return strings.ReplaceAll(string(res), `"`, "")
 }
@@ -190,7 +181,7 @@ func (lcu *Lcu) GetReplaysConfiguration() (configuration *ReplaysConfigurationV1
 	url := "/lol-replays/v1/configuration"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
-		return nil, &ResponseError{Message: errRes.Message}
+		return nil, &responseError{Message: errRes.Message}
 	}
 	_ = json.Unmarshal(res, &configuration)
 	return configuration, nil
@@ -201,7 +192,7 @@ func (lcu *Lcu) GetRoflsPath() string {
 	url := "/lol-replays/v1/rofls/path"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
-		panic(&ResponseError{Message: errRes.Message})
+		panic(&responseError{Message: errRes.Message})
 	}
 	return strings.ReplaceAll(string(res), `"`, "")
 }
@@ -211,7 +202,7 @@ func (lcu *Lcu) GetRoflsDefaultPath() string {
 	url := "/lol-replays/v1/rofls/path/default"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
-		panic(&ResponseError{Message: errRes.Message})
+		panic(&responseError{Message: errRes.Message})
 	}
 	return strings.ReplaceAll(string(res), `"`, "")
 }
