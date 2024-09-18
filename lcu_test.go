@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var lcu = NewLcuClient("58566", BasicAuth{"riot", "G_0ULX5QpOkXh9G98MYAjQ"})
+var lcu = NewLcuClient("53559", BasicAuth{"riot", "npvaqXxkZnx0KMJu8jPSaA"})
 
 func TestLcu_getServiceEndpoint(t *testing.T) {
 	tests := []struct {
@@ -19,6 +19,32 @@ func TestLcu_getServiceEndpoint(t *testing.T) {
 			got := lcu.GetServiceEndpoint()
 			if got != tt.want {
 				t.Errorf("getServiceEndpoint() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestLcu_GetSummonerByPuuid(t *testing.T) {
+	type args struct {
+		puuid string
+	}
+	tests := []struct {
+		name         string
+		args         args
+		wantSummoner bool
+		wantErr      bool
+	}{
+		{"base", args{"c9ea4cd2-fd41-5656-b615-49056d444271"}, true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotSummoner, err := lcu.GetSummonerByPuuid(tt.args.puuid)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetSummonerByPuuid() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if gotSummoner != nil && !tt.wantSummoner {
+				t.Errorf("GetSummonerByPuuid() gotSummoner = %v, wantSummoner %v", gotSummoner, tt.wantSummoner)
 			}
 		})
 	}

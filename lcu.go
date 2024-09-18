@@ -9,7 +9,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,10 +16,11 @@ import (
 
 // Lcu 封装了 League Client API
 type Lcu struct {
-	Client    *http.Client
-	port      string
-	auth      BasicAuth
-	websocket lcuWebsocket
+	Client        *http.Client
+	Port          string
+	Auth          BasicAuth
+	authTransport AuthTransport
+	websocket     lcuWebsocket
 }
 
 // BasicAuth 鉴权信息
@@ -35,48 +35,53 @@ func (ba BasicAuth) toString() string {
 	return "Basic " + b
 }
 
-type basicAuthTransport struct {
-	transport http.RoundTripper
-	port      string
-	basicAuth BasicAuth
+func (ba BasicAuth) setAuth(req *http.Request) {
+	req.SetBasicAuth(ba.UserName, ba.Password)
 }
 
-func (transport *basicAuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	req.SetBasicAuth(transport.basicAuth.UserName, transport.basicAuth.Password)
+type localTransport struct {
+	http.RoundTripper
+	lcu *Lcu
+}
+
+func (l *localTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	req.URL.Scheme = "https"
-	req.URL.Host = "127.0.0.1:" + transport.port
-	return transport.transport.RoundTrip(req)
+	req.URL.Host = "127.0.0.1:" + l.lcu.Port
+	return l.RoundTripper.RoundTrip(req)
 }
 
 // NewLcuClient 创建一个Lcu客户端。
 func NewLcuClient(port string, auth BasicAuth) *Lcu {
 	lcu := new(Lcu)
-	lcu.port = port
-	lcu.auth = auth
-	lcu.Client = &http.Client{
-		Transport: &basicAuthTransport{
-			transport: &http.Transport{
+	lcu.Port = port
+	lcu.Auth = auth
+	lcu.authTransport = AuthTransport{
+		&localTransport{
+			&http.Transport{
 				TLSClientConfig: &tls.Config{
 					InsecureSkipVerify: true, // 跳过证书验证
 				},
 			},
-			basicAuth: auth,
-			port:      port,
+			lcu,
 		},
+		lcu.Auth,
 	}
+	lcu.Client = &http.Client{Transport: lcu.authTransport}
 	return lcu
 }
 
-// SgpToken 鉴权信息
-type SgpToken struct {
-	AccessToken string `json:"accessToken"`
-	Issuer      string `json:"issuer"`
-	Subject     string `json:"subject"`
-	Token       string `json:"token"`
+// ResponseError 接口返回的错误信息。
+type ResponseError struct {
+	Message string
 }
 
+func (error ResponseError) Error() string {
+	return error.Message
+}
+
+// GetSgpToken 获取SGP Token。
 func (lcu *Lcu) GetSgpToken() (token *SgpToken, err error) {
-	res, errRes := httpGet(*lcu.Client, "/entitlements/v1/token")
+	res, errRes := httpGet(lcu.Client, "/entitlements/v1/token")
 	if errRes != nil {
 		return nil, &ResponseError{Message: errRes.Message}
 	}
@@ -87,7 +92,7 @@ func (lcu *Lcu) GetSgpToken() (token *SgpToken, err error) {
 // GetSummonerByName 通过召唤师名称获取召唤师信息。
 func (lcu *Lcu) GetSummonerByName(name string) (summoner *Summoner, err error) {
 	path := fmt.Sprintf("/lol-summoner/v1/summoners?name=%s", url.QueryEscape(name))
-	res, errRes := httpGet(*lcu.Client, path)
+	res, errRes := httpGet(lcu.Client, path)
 	if errRes != nil {
 		return nil, &ResponseError{Message: errRes.Message}
 	}
@@ -98,7 +103,7 @@ func (lcu *Lcu) GetSummonerByName(name string) (summoner *Summoner, err error) {
 // GetSummonerByPuuid 通过召唤师puuid获取召唤师信息。
 func (lcu *Lcu) GetSummonerByPuuid(puuid string) (summoner *Summoner, err error) {
 	path := fmt.Sprintf("/lol-summoner/v2/summoners/puuid/%s", puuid)
-	res, errRes := httpGet(*lcu.Client, path)
+	res, errRes := httpGet(lcu.Client, path)
 	if errRes != nil {
 		return nil, &ResponseError{Message: errRes.Message}
 	}
@@ -115,7 +120,7 @@ func (lcu *Lcu) GetSummonerGamesByPuuid(puuid string, begin int, end int) (games
 	path := fmt.Sprintf(
 		"/lol-match-history/v1/products/lol/%s/matches?begIndex=%d&endIndex=%d",
 		puuid, begin, end)
-	res, errRes := httpGet(*lcu.Client, path)
+	res, errRes := httpGet(lcu.Client, path)
 	if errRes != nil {
 		return nil, &ResponseError{Message: errRes.Message}
 	}
@@ -125,128 +130,12 @@ func (lcu *Lcu) GetSummonerGamesByPuuid(puuid string, begin int, end int) (games
 
 func (lcu *Lcu) GetGameInfoByGameId(gameId int64) (game *GameInfo, err error) {
 	path := fmt.Sprintf("/lol-match-history/v1/games/%d", gameId)
-	res, errRes := httpGet(*lcu.Client, path)
+	res, errRes := httpGet(lcu.Client, path)
 	if errRes != nil {
 		return nil, &ResponseError{Message: errRes.Message}
 	}
 	_ = json.Unmarshal(res, &game)
 	return game, nil
-}
-
-type lcuWebsocket struct {
-	conn             *websocket.Conn
-	onError          func(error)
-	onUnmarshalError func(message string) bool
-	dispatcher       map[string]func(interface{})
-}
-
-func (ws lcuWebsocket) subscribe(event string, handler func(interface{})) error {
-	err := ws.conn.WriteJSON([]interface{}{5, event})
-	if err != nil {
-		return err
-	}
-	ws.dispatcher[event] = handler
-	return nil
-}
-
-func (ws lcuWebsocket) unsubscribe(event string) error {
-	err := ws.conn.WriteJSON([]interface{}{6, event})
-	if err != nil {
-		return err
-	}
-	delete(ws.dispatcher, event)
-	return nil
-}
-
-// Subscribe 订阅一个客户端事件。
-//
-// event: 事件
-//
-// handler: 回调函数
-func (lcu *Lcu) Subscribe(event string, handler func(interface{})) error {
-	return lcu.websocket.subscribe(event, handler)
-}
-
-// Unsubscribe 取消订阅一个客户端事件。
-func (lcu *Lcu) Unsubscribe(event string) error {
-	return lcu.websocket.unsubscribe(event)
-}
-
-// StartWebsocket 启动一个websocket连接。
-//
-// 可用于获取客户端事件
-//
-// onError: 错误回调，可为nil
-//
-// onUnmarshalError: 解析错误回调，返回true继续解析，false结束解析，为nil则默认为true
-//
-// 返回错误
-func (lcu *Lcu) StartWebsocket(onError func(error), onUnmarshalError func(message string) bool) error {
-	dialer := websocket.Dialer{
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true, // 跳过证书验证
-		},
-	}
-	conn, _, err := dialer.Dial(
-		"wss://127.0.0.1:"+lcu.port,
-		http.Header{"Authorization": []string{lcu.auth.toString()}},
-	)
-	if err != nil {
-		fmt.Println("连接失败")
-		return err
-	}
-
-	if onError == nil {
-		onError = func(err error) {
-			fmt.Printf("Websocket错误: %v\n", err)
-		}
-	}
-	if onUnmarshalError == nil {
-		onUnmarshalError = func(message string) bool {
-			return true
-		}
-	}
-	lcu.websocket = lcuWebsocket{
-		conn:             conn,
-		onError:          onError,
-		onUnmarshalError: onUnmarshalError,
-		dispatcher:       make(map[string]func(interface{})),
-	}
-
-	go lcu.websocket.listen()
-
-	return nil
-}
-
-func (ws lcuWebsocket) listen() {
-	for {
-		_, message, err := ws.conn.ReadMessage()
-		if err != nil {
-			ws.onError(err)
-			continue
-		}
-
-		proto := new([]interface{})
-		err = json.Unmarshal(message, &proto)
-		if err != nil {
-			if ws.onUnmarshalError(string(message)) {
-				continue
-			} else {
-				break
-			}
-		}
-		ws.dispatcher[(*proto)[1].(string)]((*proto)[2])
-	}
-	ws.conn.Close()
-}
-
-// ResponseError 接口返回的错误信息。
-type ResponseError struct {
-	Message string
-}
-
-func (error ResponseError) Error() string {
-	return error.Message
 }
 
 // Spectate 观战。
@@ -264,7 +153,7 @@ func (lcu *Lcu) Spectate(name string, tagline string, puuid string) (isSuccess b
 		"gameQueueType":        "",
 		"puuid":                puuid,
 	}
-	res, errRes := httpPost(*lcu.Client, url, payload)
+	res, errRes := httpPost(lcu.Client, url, payload)
 	if errRes != nil {
 		return false, &ResponseError{Message: errRes.Message}
 	}
@@ -277,7 +166,7 @@ func (lcu *Lcu) Spectate(name string, tagline string, puuid string) (isSuccess b
 // panic: 获取失败
 func (lcu *Lcu) GetServiceEndpoint() string {
 	url := "/lol-platform-config/v1/namespaces/PlayerPreferences/ServiceEndpoint"
-	res, errRes := httpGet(*lcu.Client, url)
+	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
 		panic(&ResponseError{Message: errRes.Message})
 	}
@@ -290,7 +179,7 @@ func (lcu *Lcu) GetServiceEndpoint() string {
 // panic: 获取失败
 func (lcu *Lcu) GetPlatformId() string {
 	url := "/lol-platform-config/v1/namespaces/LoginDataPacket/platformId"
-	res, errRes := httpGet(*lcu.Client, url)
+	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
 		panic(&ResponseError{Message: errRes.Message})
 	}
@@ -299,7 +188,7 @@ func (lcu *Lcu) GetPlatformId() string {
 
 func (lcu *Lcu) GetReplaysConfiguration() (configuration *ReplaysConfigurationV1, err error) {
 	url := "/lol-replays/v1/configuration"
-	res, errRes := httpGet(*lcu.Client, url)
+	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
 		return nil, &ResponseError{Message: errRes.Message}
 	}
@@ -310,7 +199,7 @@ func (lcu *Lcu) GetReplaysConfiguration() (configuration *ReplaysConfigurationV1
 // GetRoflsPath 获取回放文件保存路径。
 func (lcu *Lcu) GetRoflsPath() string {
 	url := "/lol-replays/v1/rofls/path"
-	res, errRes := httpGet(*lcu.Client, url)
+	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
 		panic(&ResponseError{Message: errRes.Message})
 	}
@@ -320,7 +209,7 @@ func (lcu *Lcu) GetRoflsPath() string {
 // GetRoflsDefaultPath 获取回放文件保存路径。
 func (lcu *Lcu) GetRoflsDefaultPath() string {
 	url := "/lol-replays/v1/rofls/path/default"
-	res, errRes := httpGet(*lcu.Client, url)
+	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
 		panic(&ResponseError{Message: errRes.Message})
 	}

@@ -19,8 +19,21 @@ type ErrorResponse struct {
 	ImplementationDetails interface{} `json:"implementationDetails"`
 	Message               string      `json:"message"`
 }
+type authSetter interface {
+	setAuth(*http.Request)
+}
 
-func httpGet(client http.Client, url string) ([]byte, *ErrorResponse) {
+type AuthTransport struct {
+	http.RoundTripper
+	authSetter
+}
+
+func (at AuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	at.setAuth(req)
+	return at.RoundTripper.RoundTrip(req)
+}
+
+func httpGet(client *http.Client, url string) ([]byte, *ErrorResponse) {
 	req, _ := http.NewRequest("GET", url, nil)
 	resp, err := client.Do(req)
 	if resp == nil {
@@ -38,7 +51,7 @@ func httpGet(client http.Client, url string) ([]byte, *ErrorResponse) {
 	return body, nil
 }
 
-func httpPost(client http.Client, url string, payload map[string]interface{}) ([]byte, *ErrorResponse) {
+func httpPost(client *http.Client, url string, payload map[string]interface{}) ([]byte, *ErrorResponse) {
 	payloadBytes, _ := json.Marshal(payload)
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(payloadBytes))
 	resp, err := client.Do(req)

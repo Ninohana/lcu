@@ -2,6 +2,14 @@ package lol
 
 import "time"
 
+// SgpToken 鉴权信息
+type SgpToken struct {
+	AccessToken string `json:"accessToken"`
+	Issuer      string `json:"issuer"`
+	Subject     string `json:"subject"`
+	Token       string `json:"token"`
+}
+
 type Summoner struct {
 	AccountId                   int64  `json:"accountId"`
 	DisplayName                 string `json:"displayName"`
