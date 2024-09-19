@@ -206,3 +206,13 @@ func (lcu *Lcu) GetRoflsDefaultPath() string {
 	}
 	return strings.ReplaceAll(string(res), `"`, "")
 }
+
+func (lcu *Lcu) GetCurrentSummonerProfile() (summonerProfile *SummonerProfile, err error) {
+	url := "/lol-summoner/v1/current-summoner/summoner-profile"
+	res, errRes := httpGet(lcu.Client, url)
+	if errRes != nil {
+		return nil, &responseError{Message: errRes.Message}
+	}
+	_ = json.Unmarshal(res, &summonerProfile)
+	return summonerProfile, nil
+}

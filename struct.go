@@ -346,3 +346,8 @@ type GamesInfo struct {
 	} `json:"games"`
 	PlatformId string `json:"platformId"`
 }
+
+type SummonerProfile struct {
+	BackgroundSkinId int    `json:"backgroundSkinId"`
+	Regalia          string `json:"regalia"`
+}

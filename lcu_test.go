@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var lcu = NewLcuClient("53559", BasicAuth{"riot", "npvaqXxkZnx0KMJu8jPSaA"})
+var lcu = NewLcuClient("54340", BasicAuth{"riot", "S1gaEfh_nXfkawOogRlFPQ"})
 
 func TestLcu_getServiceEndpoint(t *testing.T) {
 	tests := []struct {
@@ -174,6 +174,29 @@ func TestLcu_GetGameInfoByGameId(t *testing.T) {
 			//prettyPrint(gotGames)
 			if gotGames == nil == tt.wantGames {
 				t.Errorf("GetSummonerGamesByPuuid() gotGames = %v, want %v", gotGames, tt.wantGames)
+			}
+		})
+	}
+}
+
+func TestLcu_GetCurrentSummonerProfile(t *testing.T) {
+	tests := []struct {
+		name    string
+		want    bool
+		wantErr bool
+	}{
+		{"base", true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotSummonerProfile, err := lcu.GetCurrentSummonerProfile()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetCurrentSummonerProfile() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			//prettyPrint(gotSummonerProfile)
+			if gotSummonerProfile == nil == tt.want {
+				t.Errorf("GetCurrentSummonerProfile() gotSummonerProfile = %v, want %v", gotSummonerProfile, tt.want)
 			}
 		})
 	}
