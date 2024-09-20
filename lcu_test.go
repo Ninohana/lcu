@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var lcu = NewLcuClient("54340", BasicAuth{"riot", "S1gaEfh_nXfkawOogRlFPQ"})
+var lcu = NewLcuClient("65218", BasicAuth{"riot", "ShXlhnRt1zEdsYcaUZlXnQ"})
 
 func TestLcu_getServiceEndpoint(t *testing.T) {
 	tests := []struct {
@@ -198,6 +198,25 @@ func TestLcu_GetCurrentSummonerProfile(t *testing.T) {
 			if gotSummonerProfile == nil == tt.want {
 				t.Errorf("GetCurrentSummonerProfile() gotSummonerProfile = %v, want %v", gotSummonerProfile, tt.want)
 			}
+		})
+	}
+}
+
+func TestLcu_GetGameFlowPhase(t *testing.T) {
+	tests := []struct {
+		name    string
+		want    bool
+		wantErr bool
+	}{
+		{"base", true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := lcu.GetGameFlowPhase()
+			if len(got) == 0 == tt.want {
+				t.Errorf("GetGameFlowPhase() = %v, want %v", got, tt.want)
+			}
+			//fmt.Println(got)
 		})
 	}
 }

@@ -216,3 +216,13 @@ func (lcu *Lcu) GetCurrentSummonerProfile() (summonerProfile *SummonerProfile, e
 	_ = json.Unmarshal(res, &summonerProfile)
 	return summonerProfile, nil
 }
+
+func (lcu *Lcu) GetGameFlowPhase() string {
+	url := "/lol-gameflow/v1/gameflow-phase"
+	res, errRes := httpGet(lcu.Client, url)
+	if errRes != nil {
+		fmt.Println(errRes.Message)
+		return ""
+	}
+	return strings.ReplaceAll(string(res), `"`, "")
+}
