@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var lcu = NewLcuClient("65218", BasicAuth{"riot", "ShXlhnRt1zEdsYcaUZlXnQ"})
+var lcu = NewLcuClient("64058", BasicAuth{"riot", "x3r1jKu05cfvopC_AqfE4Q"})
 
 func TestLcu_getServiceEndpoint(t *testing.T) {
 	tests := []struct {
@@ -217,6 +217,29 @@ func TestLcu_GetGameFlowPhase(t *testing.T) {
 				t.Errorf("GetGameFlowPhase() = %v, want %v", got, tt.want)
 			}
 			//fmt.Println(got)
+		})
+	}
+}
+
+func TestLcu_GetGameflowSession(t *testing.T) {
+	tests := []struct {
+		name    string
+		want    bool
+		wantErr bool
+	}{
+		{"base", true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gameFlowInfo, err := lcu.GetGameflowSession()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetGameflowSession() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			prettyPrint(gameFlowInfo)
+			if gameFlowInfo != nil && !tt.want {
+				t.Errorf("GetGameflowSession() got = %v, want %v", gameFlowInfo, tt.want)
+			}
 		})
 	}
 }

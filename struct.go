@@ -334,6 +334,7 @@ type GameInfo struct {
 		Win                  string `json:"win"`
 	} `json:"teams"`
 }
+
 type GamesInfo struct {
 	AccountId int64 `json:"accountId"`
 	Games     struct {
@@ -350,4 +351,146 @@ type GamesInfo struct {
 type SummonerProfile struct {
 	BackgroundSkinId int    `json:"backgroundSkinId"`
 	Regalia          string `json:"regalia"`
+}
+
+type GameClient struct {
+	ObserverServerIp   string `json:"observerServerIp"`
+	ObserverServerPort int    `json:"observerServerPort"`
+	Running            bool   `json:"running"`
+	ServerIp           string `json:"serverIp"`
+	ServerPort         int    `json:"serverPort"`
+	Visible            bool   `json:"visible"`
+}
+
+type GameflowInfo struct {
+	GameClient `json:"gameClient"`
+	GameData   struct {
+		GameId                   int           `json:"gameId"`
+		GameName                 string        `json:"gameName"`
+		IsCustomGame             bool          `json:"isCustomGame"`
+		Password                 string        `json:"password"`
+		PlayerChampionSelections []interface{} `json:"playerChampionSelections"`
+		Queue                    struct {
+			AllowablePremadeSizes   []interface{} `json:"allowablePremadeSizes"`
+			AreFreeChampionsAllowed bool          `json:"areFreeChampionsAllowed"`
+			AssetMutator            string        `json:"assetMutator"`
+			Category                string        `json:"category"`
+			ChampionsRequiredToPlay int           `json:"championsRequiredToPlay"`
+			Description             string        `json:"description"`
+			DetailedDescription     string        `json:"detailedDescription"`
+			GameMode                string        `json:"gameMode"`
+			GameTypeConfig          struct {
+				AdvancedLearningQuests bool   `json:"advancedLearningQuests"`
+				AllowTrades            bool   `json:"allowTrades"`
+				BanMode                string `json:"banMode"`
+				BanTimerDuration       int    `json:"banTimerDuration"`
+				BattleBoost            bool   `json:"battleBoost"`
+				CrossTeamChampionPool  bool   `json:"crossTeamChampionPool"`
+				DeathMatch             bool   `json:"deathMatch"`
+				DoNotRemove            bool   `json:"doNotRemove"`
+				DuplicatePick          bool   `json:"duplicatePick"`
+				ExclusivePick          bool   `json:"exclusivePick"`
+				Id                     int    `json:"id"`
+				LearningQuests         bool   `json:"learningQuests"`
+				MainPickTimerDuration  int    `json:"mainPickTimerDuration"`
+				MaxAllowableBans       int    `json:"maxAllowableBans"`
+				Name                   string `json:"name"`
+				OnboardCoopBeginner    bool   `json:"onboardCoopBeginner"`
+				PickMode               string `json:"pickMode"`
+				PostPickTimerDuration  int    `json:"postPickTimerDuration"`
+				Reroll                 bool   `json:"reroll"`
+				TeamChampionPool       bool   `json:"teamChampionPool"`
+			} `json:"gameTypeConfig"`
+			Id                         int    `json:"id"`
+			IsRanked                   bool   `json:"isRanked"`
+			IsTeamBuilderManaged       bool   `json:"isTeamBuilderManaged"`
+			LastToggledOffTime         int    `json:"lastToggledOffTime"`
+			LastToggledOnTime          int    `json:"lastToggledOnTime"`
+			MapId                      int    `json:"mapId"`
+			MaximumParticipantListSize int    `json:"maximumParticipantListSize"`
+			MinLevel                   int    `json:"minLevel"`
+			MinimumParticipantListSize int    `json:"minimumParticipantListSize"`
+			Name                       string `json:"name"`
+			NumPlayersPerTeam          int    `json:"numPlayersPerTeam"`
+			QueueAvailability          string `json:"queueAvailability"`
+			QueueRewards               struct {
+				IsChampionPointsEnabled bool          `json:"isChampionPointsEnabled"`
+				IsIpEnabled             bool          `json:"isIpEnabled"`
+				IsXpEnabled             bool          `json:"isXpEnabled"`
+				PartySizeIpRewards      []interface{} `json:"partySizeIpRewards"`
+			} `json:"queueRewards"`
+			RemovalFromGameAllowed      bool   `json:"removalFromGameAllowed"`
+			RemovalFromGameDelayMinutes int    `json:"removalFromGameDelayMinutes"`
+			ShortName                   string `json:"shortName"`
+			ShowPositionSelector        bool   `json:"showPositionSelector"`
+			SpectatorEnabled            bool   `json:"spectatorEnabled"`
+			Type                        string `json:"type"`
+		} `json:"queue"`
+		SpectatorsAllowed bool          `json:"spectatorsAllowed"`
+		TeamOne           []interface{} `json:"teamOne"`
+		TeamTwo           []interface{} `json:"teamTwo"`
+	} `json:"gameData"`
+	GameDodge struct {
+		DodgeIds []interface{} `json:"dodgeIds"`
+		Phase    string        `json:"phase"`
+		State    string        `json:"state"`
+	} `json:"gameDodge"`
+	Map struct {
+		Assets struct {
+			ChampSelectBackgroundSound  string `json:"champ-select-background-sound"`
+			ChampSelectFlyoutBackground string `json:"champ-select-flyout-background"`
+			ChampSelectPlanningIntro    string `json:"champ-select-planning-intro"`
+			GameSelectIconActive        string `json:"game-select-icon-active"`
+			GameSelectIconActiveVideo   string `json:"game-select-icon-active-video"`
+			GameSelectIconDefault       string `json:"game-select-icon-default"`
+			GameSelectIconDisabled      string `json:"game-select-icon-disabled"`
+			GameSelectIconHover         string `json:"game-select-icon-hover"`
+			GameSelectIconIntroVideo    string `json:"game-select-icon-intro-video"`
+			GameflowBackground          string `json:"gameflow-background"`
+			GameflowBackgroundDark      string `json:"gameflow-background-dark"`
+			GameselectButtonHoverSound  string `json:"gameselect-button-hover-sound"`
+			IconDefeat                  string `json:"icon-defeat"`
+			IconDefeatV2                string `json:"icon-defeat-v2"`
+			IconDefeatVideo             string `json:"icon-defeat-video"`
+			IconEmpty                   string `json:"icon-empty"`
+			IconHover                   string `json:"icon-hover"`
+			IconLeaver                  string `json:"icon-leaver"`
+			IconLeaverV2                string `json:"icon-leaver-v2"`
+			IconLossForgivenV2          string `json:"icon-loss-forgiven-v2"`
+			IconV2                      string `json:"icon-v2"`
+			IconVictory                 string `json:"icon-victory"`
+			IconVictoryVideo            string `json:"icon-victory-video"`
+			MapNorth                    string `json:"map-north"`
+			MapSouth                    string `json:"map-south"`
+			MusicInqueueLoopSound       string `json:"music-inqueue-loop-sound"`
+			PartiesBackground           string `json:"parties-background"`
+			PostgameAmbienceLoopSound   string `json:"postgame-ambience-loop-sound"`
+			ReadyCheckBackground        string `json:"ready-check-background"`
+			ReadyCheckBackgroundSound   string `json:"ready-check-background-sound"`
+			SfxAmbiencePregameLoopSound string `json:"sfx-ambience-pregame-loop-sound"`
+			SocialIconLeaver            string `json:"social-icon-leaver"`
+			SocialIconVictory           string `json:"social-icon-victory"`
+		} `json:"assets"`
+		CategorizedContentBundles struct {
+		} `json:"categorizedContentBundles"`
+		Description                         string `json:"description"`
+		GameMode                            string `json:"gameMode"`
+		GameModeName                        string `json:"gameModeName"`
+		GameModeShortName                   string `json:"gameModeShortName"`
+		GameMutator                         string `json:"gameMutator"`
+		Id                                  int    `json:"id"`
+		IsRGM                               bool   `json:"isRGM"`
+		MapStringId                         string `json:"mapStringId"`
+		Name                                string `json:"name"`
+		PerPositionDisallowedSummonerSpells struct {
+		} `json:"perPositionDisallowedSummonerSpells"`
+		PerPositionRequiredSummonerSpells struct {
+		} `json:"perPositionRequiredSummonerSpells"`
+		PlatformId   string `json:"platformId"`
+		PlatformName string `json:"platformName"`
+		Properties   struct {
+			SuppressRunesMasteriesPerks bool `json:"suppressRunesMasteriesPerks"`
+		} `json:"properties"`
+	} `json:"map"`
+	Phase string `json:"phase"`
 }

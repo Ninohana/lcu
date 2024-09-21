@@ -226,3 +226,13 @@ func (lcu *Lcu) GetGameFlowPhase() string {
 	}
 	return strings.ReplaceAll(string(res), `"`, "")
 }
+
+func (lcu *Lcu) GetGameflowSession() (gameflowInfo *GameflowInfo, err error) {
+	url := "/lol-gameflow/v1/session"
+	res, errRes := httpGet(lcu.Client, url)
+	if errRes != nil {
+		return nil, &responseError{Message: errRes.Message}
+	}
+	_ = json.Unmarshal(res, &gameflowInfo)
+	return gameflowInfo, nil
+}
