@@ -22,50 +22,50 @@ func prettyPrintWithTag(tag string, v any) {
 	fmt.Printf("=========%s=========\n", strings.Repeat("==", len(tag)/3))
 }
 func TestNewLcuClient(t *testing.T) {
-	summoner, err := lcu.GetSummonerByName("我玉玉了#55165") // 班德尔城，大佬带带我
+	summoner, err := lcuClient.GetSummonerByName("我玉玉了#55165") // 班德尔城，大佬带带我
 	if err != nil {
 		t.Error(err)
 	}
 	prettyPrint(summoner)
 
-	_ = lcu.StartWebsocket(nil, nil)
+	_ = lcuClient.StartWebsocket(nil, nil)
 	//_ = lcu.StartWebsocket(func(err error) {
 	//	panic(err)
 	//}, func(message string) bool {
 	//	fmt.Println(message)
 	//	return true
 	//})
-	err = lcu.Subscribe("OnJsonApiEvent", func(data interface{}) {
+	err = lcuClient.Subscribe("OnJsonApiEvent", func(data interface{}) {
 		fmt.Println(data)
 	})
 	if err != nil {
 		t.Errorf("订阅失败")
 	}
 
-	err = lcu.Unsubscribe("OnJsonApiEvent")
+	err = lcuClient.Unsubscribe("OnJsonApiEvent")
 	if err != nil {
 		t.Errorf("取消订阅失败")
 	}
 }
 
 func TestNewSgpClient(t *testing.T) {
-	sgpToken, _ := lcu.GetSgpToken()
-	sgp := NewSgpClient(sgpToken.AccessToken, CQ100)
+	sgpToken, _ := lcuClient.GetSgpToken()
+	sgpClient := NewSgpClient(sgpToken.AccessToken, CQ100)
 
-	summoner, err := sgp.GetSummonerByName("我玉玉了")
+	summoner, err := sgpClient.GetSummonerByName("我玉玉了")
 	if err != nil {
 		t.Error(err)
 	} else {
 		prettyPrint(summoner)
 
-		gamingInfo, err := sgp.GetGamingInfoByPuuid(summoner.Puuid)
+		gamingInfo, err := sgpClient.GetGamingInfoByPuuid(summoner.Puuid)
 		if err != nil {
 			t.Error(err)
 		} else {
 			prettyPrintWithTag("获取正在发生的对局信息", gamingInfo)
 		}
 
-		jwt, err := sgp.GetJwtByPuuid(summoner.Puuid)
+		jwt, err := sgpClient.GetJwtByPuuid(summoner.Puuid)
 		if err != nil {
 			t.Error(err)
 		} else {
@@ -73,7 +73,7 @@ func TestNewSgpClient(t *testing.T) {
 		}
 	}
 
-	isValid, err := sgp.CheckName("我玉玉了")
+	isValid, err := sgpClient.CheckName("我玉玉了")
 	if err != nil {
 		t.Error(err)
 	} else {

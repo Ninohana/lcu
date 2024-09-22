@@ -12,8 +12,8 @@ import (
 	"strconv"
 )
 
-// Sgp 封装了SGP API。
-type Sgp struct {
+// sgp 封装了SGP API。
+type sgp struct {
 	Client *http.Client
 	Auth   OAuth
 	Region Region
@@ -55,8 +55,8 @@ var CQ100 = Region{
 //...
 
 // NewSgpClient 创建一个Sgp客户端。
-func NewSgpClient(accessToken string, region Region) *Sgp {
-	sgp := new(Sgp)
+func NewSgpClient(accessToken string, region Region) *sgp {
+	sgp := new(sgp)
 	sgp.Region = region
 	sgp.Auth = OAuth{accessToken}
 	sgp.Client = &http.Client{
@@ -75,7 +75,7 @@ func NewSgpClient(accessToken string, region Region) *Sgp {
 // RefreshToken 刷新token。
 //
 // 疑似过时
-func (sgp *Sgp) RefreshToken() {
+func (sgp *sgp) RefreshToken() {
 	url := fmt.Sprintf("%s/session-external/v1/session/refresh", sgp.Region.Endpoint)
 	lst := map[string]interface{}{
 		"lst": sgp.Auth.AccessToken,
@@ -95,7 +95,7 @@ func (sgp *Sgp) RefreshToken() {
 // name: 召唤师名称
 //
 // 该函数构造请求URL，使用HTTP请求获取召唤师信息，并返回响应的主体内容。
-func (sgp *Sgp) GetSummonerByName(name string) (summoner *SummonerViaSgp, err error) {
+func (sgp *sgp) GetSummonerByName(name string) (summoner *SummonerViaSgp, err error) {
 	//url := fmt.Sprintf("%s/summoner-ledge/v1/regions/%s/summoners/names", region.Endpoint, region.Code)
 	url := fmt.Sprintf("%s/summoner-ledge/v1/regions/%s/summoners/name/%s", sgp.Region.Endpoint, sgp.Region.Code, name)
 	res, errRes := httpGet(sgp.Client, url)
@@ -107,7 +107,7 @@ func (sgp *Sgp) GetSummonerByName(name string) (summoner *SummonerViaSgp, err er
 }
 
 // CheckName 检查召唤师名称是否可用。
-func (sgp *Sgp) CheckName(name string) (bool, error) {
+func (sgp *sgp) CheckName(name string) (bool, error) {
 	url := fmt.Sprintf("%s/summoner-ledge/v1/regions/%s/checkname?summonerName=%s", sgp.Region.Endpoint, sgp.Region.Code, name)
 	res, errRes := httpGet(sgp.Client, url)
 	if errRes != nil {
@@ -120,7 +120,7 @@ func (sgp *Sgp) CheckName(name string) (bool, error) {
 // GetJwtByPuuid 通过puuid获取jwt。
 //
 // 用于访问客户端聊天功能
-func (sgp *Sgp) GetJwtByPuuid(puuid string) (string, error) {
+func (sgp *sgp) GetJwtByPuuid(puuid string) (string, error) {
 	url := fmt.Sprintf("%s/summoner-ledge/v1/regions/%s/summoners/puuid/%s/jwt", sgp.Region.Endpoint, sgp.Region.Code, puuid)
 	res, errRes := httpGet(sgp.Client, url)
 	if errRes != nil {
@@ -130,7 +130,7 @@ func (sgp *Sgp) GetJwtByPuuid(puuid string) (string, error) {
 }
 
 // GetGamingInfoByPuuid 获取正在进行的对局信息。
-func (sgp *Sgp) GetGamingInfoByPuuid(puuid string) (gamingInfo *GamingInfo, err error) {
+func (sgp *sgp) GetGamingInfoByPuuid(puuid string) (gamingInfo *GamingInfo, err error) {
 	url := fmt.Sprintf("%s/gsm/v1/ledge/spectator/region/%s/puuid/%s", sgp.Region.Endpoint, sgp.Region.Code, puuid)
 	res, errRes := httpGet(sgp.Client, url)
 	if errRes != nil {

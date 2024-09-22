@@ -44,25 +44,25 @@ import (
 
 ```go
 // 创建LCU客户端
-lcu := NewLcuClient("62529", BasicAuth{"riot", "JDJE18RKuT3fldK5yc2xuA"})
+lcuClient := NewLcuClient("62529", BasicAuth{"riot", "JDJE18RKuT3fldK5yc2xuA"})
 
 // 获取召唤师信息
-summoner, _ := lcu.GetSummonerByName("我玉玉了#55165")
+summoner, _ := lcuClient.GetSummonerByName("我玉玉了#55165")
 fmt.Println(summoner)
 
 // 开启长连接
-lcu.StartWebsocket(nil, nil)
+lcuClient.StartWebsocket(nil, nil)
 // 监听事件
-lcu.Subscribe("OnJsonApiEvent", func(data interface{}) {
+lcuClient.Subscribe("OnJsonApiEvent", func(data interface{}) {
 		fmt.Println(data) // 直接输出
 })
 
 // 创建SGP客户端
-sgpToken, _ := lcu.GetSgpToken() // 获取token
-sgp := NewSgpClient(sgpToken.AccessToken, CQ100) // 班德尔城
+sgpToken, _ := lcuClient.GetSgpToken() // 获取token
+sgpClient := NewSgpClient(sgpToken.AccessToken, CQ100) // 班德尔城
 
 // 获取正在发生的对局信息
-gamingInfo, _ := sgp.GetGamingInfoByPuuid(summoner.Puuid)
+gamingInfo, _ := sgpClient.GetGamingInfoByPuuid(summoner.Puuid)
 fmt.Println(gamingInfo)
 ```
 

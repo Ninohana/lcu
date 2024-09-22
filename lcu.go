@@ -14,8 +14,8 @@ import (
 	"strings"
 )
 
-// Lcu 封装了 League Client API
-type Lcu struct {
+// lcu 封装了 League Client API
+type lcu struct {
 	Client        *http.Client
 	Port          string
 	Auth          BasicAuth
@@ -41,7 +41,7 @@ func (ba BasicAuth) setAuth(req *http.Request) {
 
 type localTransport struct {
 	http.RoundTripper
-	lcu *Lcu
+	lcu *lcu
 }
 
 func (l *localTransport) RoundTrip(req *http.Request) (*http.Response, error) {
@@ -51,8 +51,8 @@ func (l *localTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 }
 
 // NewLcuClient 创建一个Lcu客户端。
-func NewLcuClient(port string, auth BasicAuth) *Lcu {
-	lcu := new(Lcu)
+func NewLcuClient(port string, auth BasicAuth) *lcu {
+	lcu := new(lcu)
 	lcu.Port = port
 	lcu.Auth = auth
 	lcu.authTransport = authTransport{
@@ -71,7 +71,7 @@ func NewLcuClient(port string, auth BasicAuth) *Lcu {
 }
 
 // GetSgpToken 获取SGP Token。
-func (lcu *Lcu) GetSgpToken() (token *SgpToken, err error) {
+func (lcu *lcu) GetSgpToken() (token *SgpToken, err error) {
 	res, errRes := httpGet(lcu.Client, "/entitlements/v1/token")
 	if errRes != nil {
 		return nil, &responseError{Message: errRes.Message}
@@ -81,7 +81,7 @@ func (lcu *Lcu) GetSgpToken() (token *SgpToken, err error) {
 }
 
 // GetSummonerByName 通过召唤师名称获取召唤师信息。
-func (lcu *Lcu) GetSummonerByName(name string) (summoner *Summoner, err error) {
+func (lcu *lcu) GetSummonerByName(name string) (summoner *Summoner, err error) {
 	path := fmt.Sprintf("/lol-summoner/v1/summoners?name=%s", url.QueryEscape(name))
 	res, errRes := httpGet(lcu.Client, path)
 	if errRes != nil {
@@ -92,7 +92,7 @@ func (lcu *Lcu) GetSummonerByName(name string) (summoner *Summoner, err error) {
 }
 
 // GetSummonerByPuuid 通过召唤师puuid获取召唤师信息。
-func (lcu *Lcu) GetSummonerByPuuid(puuid string) (summoner *Summoner, err error) {
+func (lcu *lcu) GetSummonerByPuuid(puuid string) (summoner *Summoner, err error) {
 	path := fmt.Sprintf("/lol-summoner/v2/summoners/puuid/%s", puuid)
 	res, errRes := httpGet(lcu.Client, path)
 	if errRes != nil {
@@ -107,7 +107,7 @@ func (lcu *Lcu) GetSummonerByPuuid(puuid string) (summoner *Summoner, err error)
 // begin: 从第多少条开始
 //
 // end: 到第多少条
-func (lcu *Lcu) GetSummonerGamesByPuuid(puuid string, begin int, end int) (games *GamesInfo, err error) {
+func (lcu *lcu) GetSummonerGamesByPuuid(puuid string, begin int, end int) (games *GamesInfo, err error) {
 	path := fmt.Sprintf(
 		"/lol-match-history/v1/products/lol/%s/matches?begIndex=%d&endIndex=%d",
 		puuid, begin, end)
@@ -119,7 +119,7 @@ func (lcu *Lcu) GetSummonerGamesByPuuid(puuid string, begin int, end int) (games
 	return games, nil
 }
 
-func (lcu *Lcu) GetGameInfoByGameId(gameId int64) (game *GameInfo, err error) {
+func (lcu *lcu) GetGameInfoByGameId(gameId int64) (game *GameInfo, err error) {
 	path := fmt.Sprintf("/lol-match-history/v1/games/%d", gameId)
 	res, errRes := httpGet(lcu.Client, path)
 	if errRes != nil {
@@ -136,7 +136,7 @@ func (lcu *Lcu) GetGameInfoByGameId(gameId int64) (game *GameInfo, err error) {
 // puuid: puuid
 //
 // 返回接口返回
-func (lcu *Lcu) Spectate(name string, tagline string, puuid string) (isSuccess bool, err error) {
+func (lcu *lcu) Spectate(name string, tagline string, puuid string) (isSuccess bool, err error) {
 	url := "/lol-spectator/v1/spectate/launch"
 	payload := map[string]interface{}{
 		"allowObserveMode":     "ALL",
@@ -155,7 +155,7 @@ func (lcu *Lcu) Spectate(name string, tagline string, puuid string) (isSuccess b
 // 形如 "https://cq100-sgp.lol.qq.com:21019"
 //
 // panic: 获取失败
-func (lcu *Lcu) GetServiceEndpoint() string {
+func (lcu *lcu) GetServiceEndpoint() string {
 	url := "/lol-platform-config/v1/namespaces/PlayerPreferences/ServiceEndpoint"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
@@ -168,7 +168,7 @@ func (lcu *Lcu) GetServiceEndpoint() string {
 // 形如 "HN10" "CQ100"
 //
 // panic: 获取失败
-func (lcu *Lcu) GetPlatformId() string {
+func (lcu *lcu) GetPlatformId() string {
 	url := "/lol-platform-config/v1/namespaces/LoginDataPacket/platformId"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
@@ -177,7 +177,7 @@ func (lcu *Lcu) GetPlatformId() string {
 	return strings.ReplaceAll(string(res), `"`, "")
 }
 
-func (lcu *Lcu) GetReplaysConfiguration() (configuration *ReplaysConfigurationV1, err error) {
+func (lcu *lcu) GetReplaysConfiguration() (configuration *ReplaysConfigurationV1, err error) {
 	url := "/lol-replays/v1/configuration"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
@@ -188,7 +188,7 @@ func (lcu *Lcu) GetReplaysConfiguration() (configuration *ReplaysConfigurationV1
 }
 
 // GetRoflsPath 获取回放文件保存路径。
-func (lcu *Lcu) GetRoflsPath() string {
+func (lcu *lcu) GetRoflsPath() string {
 	url := "/lol-replays/v1/rofls/path"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
@@ -198,7 +198,7 @@ func (lcu *Lcu) GetRoflsPath() string {
 }
 
 // GetRoflsDefaultPath 获取回放文件保存路径。
-func (lcu *Lcu) GetRoflsDefaultPath() string {
+func (lcu *lcu) GetRoflsDefaultPath() string {
 	url := "/lol-replays/v1/rofls/path/default"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
@@ -207,7 +207,7 @@ func (lcu *Lcu) GetRoflsDefaultPath() string {
 	return strings.ReplaceAll(string(res), `"`, "")
 }
 
-func (lcu *Lcu) GetCurrentSummonerProfile() (summonerProfile *SummonerProfile, err error) {
+func (lcu *lcu) GetCurrentSummonerProfile() (summonerProfile *SummonerProfile, err error) {
 	url := "/lol-summoner/v1/current-summoner/summoner-profile"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
@@ -217,7 +217,7 @@ func (lcu *Lcu) GetCurrentSummonerProfile() (summonerProfile *SummonerProfile, e
 	return summonerProfile, nil
 }
 
-func (lcu *Lcu) GetGameFlowPhase() string {
+func (lcu *lcu) GetGameFlowPhase() string {
 	url := "/lol-gameflow/v1/gameflow-phase"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
@@ -227,7 +227,7 @@ func (lcu *Lcu) GetGameFlowPhase() string {
 	return strings.ReplaceAll(string(res), `"`, "")
 }
 
-func (lcu *Lcu) GetGameflowSession() (gameflowInfo *GameflowInfo, err error) {
+func (lcu *lcu) GetGameflowSession() (gameflowInfo *GameflowInfo, err error) {
 	url := "/lol-gameflow/v1/session"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
@@ -240,7 +240,7 @@ func (lcu *Lcu) GetGameflowSession() (gameflowInfo *GameflowInfo, err error) {
 // AcceptTrade 接受英雄交换请求。
 //
 // actionId: 交换请求的ActionId
-func (lcu *Lcu) AcceptTrade(actionId int) error {
+func (lcu *lcu) AcceptTrade(actionId int) error {
 	url := fmt.Sprintf("/lol-champ-select/v1/session/trades/%d/accept", actionId)
 	_, errRes := httpPost(lcu.Client, url, nil)
 	if errRes != nil {
@@ -249,7 +249,7 @@ func (lcu *Lcu) AcceptTrade(actionId int) error {
 	return nil
 }
 
-func (lcu *Lcu) GetSelectSession() (selectSession *SelectSession, err error) {
+func (lcu *lcu) GetSelectSession() (selectSession *SelectSession, err error) {
 	url := "/lol-champ-select/v1/session"
 	res, errRes := httpGet(lcu.Client, url)
 	if errRes != nil {
