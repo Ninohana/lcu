@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var lcu = NewLcuClient("64058", BasicAuth{"riot", "x3r1jKu05cfvopC_AqfE4Q"})
+var lcu = NewLcuClient("51860", BasicAuth{"riot", "Bax-Vrkx4Crw2dDfJ4UjFQ"})
 
 func TestLcu_getServiceEndpoint(t *testing.T) {
 	tests := []struct {
@@ -239,6 +239,26 @@ func TestLcu_GetGameflowSession(t *testing.T) {
 			prettyPrint(gameFlowInfo)
 			if gameFlowInfo != nil && !tt.want {
 				t.Errorf("GetGameflowSession() got = %v, want %v", gameFlowInfo, tt.want)
+			}
+		})
+	}
+}
+
+func TestLcu_AcceptTrade(t *testing.T) {
+	type args struct {
+		actionId int
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{"base", args{1}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := lcu.AcceptTrade(tt.args.actionId); (err != nil) != tt.wantErr {
+				t.Errorf("AcceptTrade() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
