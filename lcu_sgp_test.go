@@ -22,34 +22,34 @@ func prettyPrintWithTag(tag string, v any) {
 	fmt.Printf("=========%s=========\n", strings.Repeat("==", len(tag)/3))
 }
 func TestNewLcuClient(t *testing.T) {
-	summoner, err := lcuClient.GetSummonerByName("我玉玉了#55165") // 班德尔城，大佬带带我
+	summoner, err := lcu.GetSummonerByName("我玉玉了#55165") // 班德尔城，大佬带带我
 	if err != nil {
 		t.Error(err)
 	}
 	prettyPrint(summoner)
 
-	_ = lcuClient.StartWebsocket(nil, nil)
-	//_ = lcu.StartWebsocket(func(err error) {
+	_ = lcu.StartWebsocket(nil, nil)
+	//_ = lcuClient.StartWebsocket(func(err error) {
 	//	panic(err)
 	//}, func(message string) bool {
 	//	fmt.Println(message)
 	//	return true
 	//})
-	err = lcuClient.Subscribe("OnJsonApiEvent", func(data interface{}) {
+	err = lcu.Subscribe("OnJsonApiEvent", func(data interface{}) {
 		fmt.Println(data)
 	})
 	if err != nil {
 		t.Errorf("订阅失败")
 	}
 
-	err = lcuClient.Unsubscribe("OnJsonApiEvent")
+	err = lcu.Unsubscribe("OnJsonApiEvent")
 	if err != nil {
 		t.Errorf("取消订阅失败")
 	}
 }
 
 func TestNewSgpClient(t *testing.T) {
-	sgpToken, _ := lcuClient.GetSgpToken()
+	sgpToken, _ := lcu.GetSgpToken()
 	sgpClient := NewSgpClient(sgpToken.AccessToken, CQ100)
 
 	summoner, err := sgpClient.GetSummonerByName("我玉玉了")
@@ -79,5 +79,5 @@ func TestNewSgpClient(t *testing.T) {
 	} else {
 		fmt.Println("名字不重复？", isValid)
 	}
-	//sgp.RefreshToken()
+	//sgpClient.RefreshToken()
 }

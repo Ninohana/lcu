@@ -1,5 +1,5 @@
 <div align="center">
-  github.com/Ninohana/lcu<br/><hr/>
+  github.com/Ninohana/lcuClient<br/><hr/>
   一个封装完好的LCU API及SGP支持的Go Mod。
 </div>
 
@@ -21,7 +21,7 @@
 ### 命令行方式
 
 ```shell
-go get github.com/Ninohana/lcu
+go get github.com/Ninohana/lcuClient
 ```
 
 ### 如果使用IDE
@@ -29,12 +29,12 @@ go get github.com/Ninohana/lcu
 Go项目中使用`import`导入即可
 
 ```go
-import "github.com/Ninohana/lcu"
+import "github.com/Ninohana/lcuClient"
 
 // 或
 
 import (
-	"github.com/Ninohana/lcu"
+	"github.com/Ninohana/lcuClient"
 )
 ```
 
@@ -76,7 +76,7 @@ fmt.Println(gamingInfo)
 
 LCU API官方文档
 
-- https://riot-api-libraries.readthedocs.io/en/latest/lcu.html#lcu-explorer
-- https://hextechdocs.dev/tag/lcu/
+- https://riot-api-libraries.readthedocs.io/en/latest/lcuClient.html#lcuClient-explorer
+- https://hextechdocs.dev/tag/lcuClient/
 - https://developer.riotgames.com/docs/lol
-- https://www.mingweisamuel.com/lcu-schema/tool/#/
+- https://www.mingweisamuel.com/lcuClient-schema/tool/#/

@@ -1,4 +1,4 @@
-module github.com/Ninohana/lcu
+module github.com/Ninohana/lcuClient
 
 go 1.22.1
 

@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var lcuClient = NewLcuClient("51860", BasicAuth{"riot", "Bax-Vrkx4Crw2dDfJ4UjFQ"})
+var lcu = NewLcuClient("51860", BasicAuth{"riot", "Bax-Vrkx4Crw2dDfJ4UjFQ"})
 
 func TestLcu_getServiceEndpoint(t *testing.T) {
 	tests := []struct {
@@ -16,7 +16,7 @@ func TestLcu_getServiceEndpoint(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := lcuClient.GetServiceEndpoint()
+			got := lcu.GetServiceEndpoint()
 			if got != tt.want {
 				t.Errorf("getServiceEndpoint() got = %v, want %v", got, tt.want)
 			}
@@ -38,7 +38,7 @@ func TestLcu_GetSummonerByPuuid(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotSummoner, err := lcuClient.GetSummonerByPuuid(tt.args.puuid)
+			gotSummoner, err := lcu.GetSummonerByPuuid(tt.args.puuid)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetSummonerByPuuid() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -60,7 +60,7 @@ func TestLcu_getPlatformId(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := lcuClient.GetPlatformId()
+			got := lcu.GetPlatformId()
 			if got != tt.want {
 				t.Errorf("getPlatformId() got = %v, want %v", got, tt.want)
 			}
@@ -78,7 +78,7 @@ func TestLcu_GetReplaysConfiguration(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotConfiguration, err := lcuClient.GetReplaysConfiguration()
+			gotConfiguration, err := lcu.GetReplaysConfiguration()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetReplaysConfiguration() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -100,7 +100,7 @@ func TestLcu_GetRoflsPath(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := lcuClient.GetRoflsPath(); (len(got) == 0) == tt.wantNotNil {
+			if got := lcu.GetRoflsPath(); (len(got) == 0) == tt.wantNotNil {
 				t.Errorf("GetRoflsPath() = %v, want %v", got, tt.wantNotNil)
 			}
 		})
@@ -116,7 +116,7 @@ func TestLcu_GetRoflsDefaultPath(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := lcuClient.GetRoflsDefaultPath(); (len(got) == 0) == tt.wantNotNil {
+			if got := lcu.GetRoflsDefaultPath(); (len(got) == 0) == tt.wantNotNil {
 				t.Errorf("GetRoflsPath() = %v, want %v", got, tt.wantNotNil)
 			}
 		})
@@ -139,7 +139,7 @@ func TestLcu_GetSummonerGamesByPuuid(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotGames, err := lcuClient.GetSummonerGamesByPuuid(tt.args.puuid, tt.args.begin, tt.args.end)
+			gotGames, err := lcu.GetSummonerGamesByPuuid(tt.args.puuid, tt.args.begin, tt.args.end)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetSummonerGamesByPuuid() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -166,7 +166,7 @@ func TestLcu_GetGameInfoByGameId(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotGames, err := lcuClient.GetGameInfoByGameId(tt.args.gameId)
+			gotGames, err := lcu.GetGameInfoByGameId(tt.args.gameId)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetSummonerGamesByPuuid() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -189,7 +189,7 @@ func TestLcu_GetCurrentSummonerProfile(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotSummonerProfile, err := lcuClient.GetCurrentSummonerProfile()
+			gotSummonerProfile, err := lcu.GetCurrentSummonerProfile()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetCurrentSummonerProfile() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -212,7 +212,7 @@ func TestLcu_GetGameFlowPhase(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := lcuClient.GetGameFlowPhase()
+			got := lcu.GetGameFlowPhase()
 			if len(got) == 0 == tt.want {
 				t.Errorf("GetGameFlowPhase() = %v, want %v", got, tt.want)
 			}
@@ -231,7 +231,7 @@ func TestLcu_GetGameflowSession(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gameFlowInfo, err := lcuClient.GetGameflowSession()
+			gameFlowInfo, err := lcu.GetGameflowSession()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetGameflowSession() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -257,7 +257,7 @@ func TestLcu_AcceptTrade(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := lcuClient.AcceptTrade(tt.args.actionId); (err != nil) != tt.wantErr {
+			if err := lcu.AcceptTrade(tt.args.actionId); (err != nil) != tt.wantErr {
 				t.Errorf("AcceptTrade() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -274,7 +274,7 @@ func TestLcu_GetSelectSession(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotSelectSession, err := lcuClient.GetSelectSession()
+			gotSelectSession, err := lcu.GetSelectSession()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetSelectSession() error = %v, wantErr %v", err, tt.wantErr)
 				return

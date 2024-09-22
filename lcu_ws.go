@@ -42,7 +42,7 @@ func (ws lcuWebsocket) unsubscribe(event string) error {
 // onUnmarshalError: 解析错误回调，返回true继续解析，false结束解析，为nil则默认为true
 //
 // 返回错误
-func (lcu *lcu) StartWebsocket(onError func(error), onUnmarshalError func(message string) bool) error {
+func (lcu *lcuClient) StartWebsocket(onError func(error), onUnmarshalError func(message string) bool) error {
 	dialer := websocket.Dialer{
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true, // 跳过证书验证
@@ -106,11 +106,11 @@ func (ws lcuWebsocket) listen() {
 // event: 事件
 //
 // handler: 回调函数
-func (lcu *lcu) Subscribe(event string, handler func(interface{})) error {
+func (lcu *lcuClient) Subscribe(event string, handler func(interface{})) error {
 	return lcu.websocket.subscribe(event, handler)
 }
 
 // Unsubscribe 取消订阅一个客户端事件。
-func (lcu *lcu) Unsubscribe(event string) error {
+func (lcu *lcuClient) Unsubscribe(event string) error {
 	return lcu.websocket.unsubscribe(event)
 }
