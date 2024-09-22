@@ -249,3 +249,13 @@ func (lcu *Lcu) AcceptTrade(actionId int) error {
 	fmt.Println(string(res))
 	return nil
 }
+
+func (lcu *Lcu) GetSelectSession() (selectSession *SelectSession, err error) {
+	url := "/lol-champ-select/v1/session"
+	res, errRes := httpGet(lcu.Client, url)
+	if errRes != nil {
+		return nil, &responseError{Message: errRes.Message}
+	}
+	_ = json.Unmarshal(res, &selectSession)
+	return selectSession, nil
+}

@@ -263,3 +263,26 @@ func TestLcu_AcceptTrade(t *testing.T) {
 		})
 	}
 }
+
+func TestLcu_GetSelectSession(t *testing.T) {
+	tests := []struct {
+		name    string
+		want    bool
+		wantErr bool
+	}{
+		{"base", true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotSelectSession, err := lcu.GetSelectSession()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetSelectSession() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			prettyPrintWithTag("英雄选择", gotSelectSession)
+			if gotSelectSession == nil && tt.want {
+				t.Errorf("GetSelectSession() gotSelectSession = %v, want %v", gotSelectSession, tt.want)
+			}
+		})
+	}
+}

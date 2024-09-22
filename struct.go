@@ -494,3 +494,76 @@ type GameflowInfo struct {
 	} `json:"map"`
 	Phase string `json:"phase"`
 }
+
+type SelectSession struct {
+	Actions [][]struct {
+		ActorCellId  int    `json:"actorCellId"`
+		ChampionId   int    `json:"championId"`
+		Completed    bool   `json:"completed"`
+		Id           int    `json:"id"`
+		IsAllyAction bool   `json:"isAllyAction"`
+		IsInProgress bool   `json:"isInProgress"`
+		PickTurn     int    `json:"pickTurn"`
+		Type         string `json:"type"`
+	} `json:"actions"`
+	AllowBattleBoost    bool `json:"allowBattleBoost"`
+	AllowDuplicatePicks bool `json:"allowDuplicatePicks"`
+	AllowLockedEvents   bool `json:"allowLockedEvents"`
+	AllowRerolling      bool `json:"allowRerolling"`
+	AllowSkinSelection  bool `json:"allowSkinSelection"`
+	Bans                struct {
+		MyTeamBans    []interface{} `json:"myTeamBans"`
+		NumBans       int           `json:"numBans"`
+		TheirTeamBans []interface{} `json:"theirTeamBans"`
+	} `json:"bans"`
+	BenchChampions     []interface{} `json:"benchChampions"`
+	BenchEnabled       bool          `json:"benchEnabled"`
+	BoostableSkinCount int           `json:"boostableSkinCount"`
+	ChatDetails        struct {
+		MucJwtDto struct {
+			ChannelClaim string `json:"channelClaim"`
+			Domain       string `json:"domain"`
+			Jwt          string `json:"jwt"`
+			TargetRegion string `json:"targetRegion"`
+		} `json:"mucJwtDto"`
+		MultiUserChatId       string `json:"multiUserChatId"`
+		MultiUserChatPassword string `json:"multiUserChatPassword"`
+	} `json:"chatDetails"`
+	Counter              int  `json:"counter"`
+	GameId               int  `json:"gameId"`
+	HasSimultaneousBans  bool `json:"hasSimultaneousBans"`
+	HasSimultaneousPicks bool `json:"hasSimultaneousPicks"`
+	IsCustomGame         bool `json:"isCustomGame"`
+	IsSpectating         bool `json:"isSpectating"`
+	LocalPlayerCellId    int  `json:"localPlayerCellId"`
+	LockedEventIndex     int  `json:"lockedEventIndex"`
+	MyTeam               []struct {
+		AssignedPosition     string `json:"assignedPosition"`
+		CellId               int    `json:"cellId"`
+		ChampionId           int    `json:"championId"`
+		ChampionPickIntent   int    `json:"championPickIntent"`
+		NameVisibilityType   string `json:"nameVisibilityType"`
+		ObfuscatedPuuid      string `json:"obfuscatedPuuid"`
+		ObfuscatedSummonerId int    `json:"obfuscatedSummonerId"`
+		Puuid                string `json:"puuid"`
+		SelectedSkinId       int    `json:"selectedSkinId"`
+		Spell1Id             int    `json:"spell1Id"`
+		Spell2Id             int    `json:"spell2Id"`
+		SummonerId           int64  `json:"summonerId"`
+		Team                 int    `json:"team"`
+		WardSkinId           int    `json:"wardSkinId"`
+	} `json:"myTeam"`
+	PickOrderSwaps     []interface{} `json:"pickOrderSwaps"`
+	RecoveryCounter    int           `json:"recoveryCounter"`
+	RerollsRemaining   int           `json:"rerollsRemaining"`
+	SkipChampionSelect bool          `json:"skipChampionSelect"`
+	TheirTeam          []interface{} `json:"theirTeam"`
+	Timer              struct {
+		AdjustedTimeLeftInPhase int    `json:"adjustedTimeLeftInPhase"`
+		InternalNowInEpochMs    int64  `json:"internalNowInEpochMs"`
+		IsInfinite              bool   `json:"isInfinite"`
+		Phase                   string `json:"phase"`
+		TotalTimeInPhase        int    `json:"totalTimeInPhase"`
+	} `json:"timer"`
+	Trades []interface{} `json:"trades"`
+}
