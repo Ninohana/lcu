@@ -7,6 +7,8 @@ package lcu
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"strings"
 	"testing"
 )
@@ -80,4 +82,23 @@ func TestNewSgpClient(t *testing.T) {
 		fmt.Println("名字不重复？", isValid)
 	}
 	//sgpClient.RefreshToken()
+}
+
+func TestLcuClient_CustomRequest(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/entitlements/v1/token", nil)
+	resp, err := lcu.Do(req)
+	if resp == nil {
+		panic(err)
+	}
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
+	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		errRes := &errorResponse{}
+		_ = json.Unmarshal(body, errRes)
+		t.Error(errRes)
+		return
+	}
+	fmt.Println(string(body))
 }
