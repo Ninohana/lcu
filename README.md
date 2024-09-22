@@ -1,4 +1,7 @@
-github.com/Ninohana/lol -  一个封装完好的LCU API及SGP支持的Go Mod。
+<div style="text-align: center;">
+  github.com/Ninohana/lcu<br/>
+  一个封装完好的LCU API及SGP支持的Go Mod。
+</div>
 
 ## 功能
 
@@ -18,7 +21,7 @@ github.com/Ninohana/lol -  一个封装完好的LCU API及SGP支持的Go Mod。
 ### 命令行方式
 
 ```shell
-go get github.com/Ninohana/lol
+go get github.com/Ninohana/lcu
 ```
 
 ### 如果使用IDE
@@ -26,12 +29,12 @@ go get github.com/Ninohana/lol
 Go项目中使用`import`导入即可
 
 ```go
-import "github.com/Ninohana/lol"
+import "github.com/Ninohana/lcu"
 
 // 或
 
 import (
-	"github.com/Ninohana/lol"
+	"github.com/Ninohana/lcu"
 )
 ```
 
