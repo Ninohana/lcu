@@ -1,5 +1,5 @@
-<div style="text-align: center;">
-  github.com/Ninohana/lcu<br/>
+<div align="center">
+  github.com/Ninohana/lcu<br/><hr/>
   一个封装完好的LCU API及SGP支持的Go Mod。
 </div>
 
