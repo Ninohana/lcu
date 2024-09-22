@@ -1,4 +1,4 @@
-package lol
+package lcu
 
 import (
 	"testing"

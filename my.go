@@ -2,7 +2,7 @@
  * Copyright © 2024 Ninohana.
  */
 
-package lol
+package lcu
 
 import (
 	"bytes"
