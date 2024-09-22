@@ -242,11 +242,10 @@ func (lcu *Lcu) GetGameflowSession() (gameflowInfo *GameflowInfo, err error) {
 // actionId: 交换请求的ActionId
 func (lcu *Lcu) AcceptTrade(actionId int) error {
 	url := fmt.Sprintf("/lol-champ-select/v1/session/trades/%d/accept", actionId)
-	res, errRes := httpPost(lcu.Client, url, nil)
+	_, errRes := httpPost(lcu.Client, url, nil)
 	if errRes != nil {
 		return &responseError{Message: errRes.Message}
 	}
-	fmt.Println(string(res))
 	return nil
 }
 
