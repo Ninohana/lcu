@@ -54,7 +54,6 @@ func NewLcuClient(port string, auth BasicAuth) *lcuClient {
 	lcu := new(lcuClient)
 	lcu.Port = port
 	lcu.Auth = auth
-	//lcu.authTransport =
 	lcu.Client = &http.Client{
 		Transport: authTransport{
 			&localTransport{
