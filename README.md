@@ -21,7 +21,7 @@
 ### 命令行方式
 
 ```shell
-go get github.com/Ninohana/lcuClient
+go get github.com/Ninohana/lcu
 ```
 
 ### 如果使用IDE
@@ -29,12 +29,12 @@ go get github.com/Ninohana/lcuClient
 Go项目中使用`import`导入即可
 
 ```go
-import "github.com/Ninohana/lcuClient"
+import "github.com/Ninohana/lcu"
 
 // 或
 
 import (
-	"github.com/Ninohana/lcuClient"
+	"github.com/Ninohana/lcu"
 )
 ```
 
@@ -44,7 +44,7 @@ import (
 
 ```go
 // 创建LCU客户端
-lcuClient := NewLcuClient("62529", BasicAuth{"riot", "JDJE18RKuT3fldK5yc2xuA"})
+lcuClient := lcu.NewLcuClient("62529", BasicAuth{"riot", "JDJE18RKuT3fldK5yc2xuA"})
 
 // 获取召唤师信息
 summoner, _ := lcuClient.GetSummonerByName("我玉玉了#55165")
@@ -59,7 +59,7 @@ lcuClient.Subscribe("OnJsonApiEvent", func(data interface{}) {
 
 // 创建SGP客户端
 sgpToken, _ := lcuClient.GetSgpToken() // 获取token
-sgpClient := NewSgpClient(sgpToken.AccessToken, CQ100) // 班德尔城
+sgpClient := lcu.NewSgpClient(sgpToken.AccessToken, CQ100) // 班德尔城
 
 // 获取正在发生的对局信息
 gamingInfo, _ := sgpClient.GetGamingInfoByPuuid(summoner.Puuid)
@@ -76,7 +76,7 @@ fmt.Println(gamingInfo)
 
 LCU API官方文档
 
-- https://riot-api-libraries.readthedocs.io/en/latest/lcuClient.html#lcuClient-explorer
-- https://hextechdocs.dev/tag/lcuClient/
+- https://riot-api-libraries.readthedocs.io/en/latest/lcu.html#lcu-explorer
+- https://hextechdocs.dev/tag/lcu/
 - https://developer.riotgames.com/docs/lol
-- https://www.mingweisamuel.com/lcuClient-schema/tool/#/
+- https://www.mingweisamuel.com/lcu-schema/tool/#/
