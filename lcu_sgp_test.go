@@ -23,6 +23,7 @@ func prettyPrintWithTag(tag string, v any) {
 	prettyPrint(v)
 	fmt.Printf("=========%s=========\n", strings.Repeat("==", len(tag)/3))
 }
+
 func TestNewLcuClient(t *testing.T) {
 	summoner, err := lcu.GetSummonerByName("我玉玉了#55165") // 班德尔城，大佬带带我
 	if err != nil {
@@ -84,15 +85,24 @@ func TestNewSgpClient(t *testing.T) {
 	//sgpClient.RefreshToken()
 }
 
+// 测试自定义请求接口
+//
+// 使用lcu客户端发送请求，此时如果已经初始化过，则不需要传入鉴权信息，lcu客户端内部会自动管理，在需要时添加
+//
+// 可以在https://www.mingweisamuel.com/lcu-schema/tool/#/查到所有接口信息
 func TestLcuClient_CustomRequest(t *testing.T) {
+	// 创建一个http请求
 	req, _ := http.NewRequest("GET", "/entitlements/v1/token", nil)
+	// 发送请求
 	resp, err := lcu.Do(req)
 	if resp == nil {
 		panic(err)
 	}
+	// 释放资源
 	defer func(Body io.ReadCloser) {
 		_ = Body.Close()
 	}(resp.Body)
+	// 获取请求返回值
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		errRes := &errorResponse{}
