@@ -13,8 +13,11 @@
  - 通过puuid获取jwt
  - 观战
  - 获取回放文件
+ - 部分其他操作
 
 持续添加中……
+
+若未提供你需要的功能，请参考[自定义接口地址](https://github.com/Ninohana/lcu/blob/main/lcu_sgp_test.go#L93)手动添加。或者你也可以发起Issue和PR，参与到项目中。
 
 ## 快速开始
 
