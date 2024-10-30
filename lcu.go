@@ -258,3 +258,12 @@ func (lcu *lcuClient) GetSelectSession() (selectSession *SelectSession, err erro
 	_ = json.Unmarshal(res, &selectSession)
 	return selectSession, nil
 }
+
+func (lcu *lcuClient) PlayAgain() error {
+	url := "/lol-lobby/v2/play-again"
+	_, errRes := httpPost(lcu.Client, url, nil)
+	if errRes != nil {
+		return &responseError{Message: errRes.Message}
+	}
+	return nil
+}
