@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var lcu = NewLcuClient("51860", BasicAuth{"riot", "Bax-Vrkx4Crw2dDfJ4UjFQ"})
+var lcu = NewLcuClient("52935", BasicAuth{"riot", "-_lSMU55LXv9xVqD2g6nUQ"})
 
 func TestLcu_getServiceEndpoint(t *testing.T) {
 	tests := []struct {

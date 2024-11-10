@@ -54,10 +54,13 @@ summoner, _ := lcuClient.GetSummonerByName("我玉玉了#55165")
 fmt.Println(summoner)
 
 // 开启长连接
-lcuClient.StartWebsocket(nil, nil)
+lws, _ := lcu.StartWebsocket(nil, nil)
 // 监听事件
-lcuClient.Subscribe("OnJsonApiEvent", func(data interface{}) {
-		fmt.Println(data) // 直接输出
+lws.Subscribe("OnJsonApiEvent", func(content *lwsMessageContent) {
+		// 仅输出
+		fmt.Println(content.EventType)
+		fmt.Println(content.Uri)
+		fmt.Println(content.Data)
 })
 
 // 创建SGP客户端

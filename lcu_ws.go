@@ -6,16 +6,29 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"net/http"
+	"sync"
 )
 
 type lcuWebsocket struct {
-	conn             *websocket.Conn
-	onError          func(error)
-	onUnmarshalError func(message string) bool
-	dispatcher       map[string]func(interface{})
+	conn       *websocket.Conn
+	wg         *sync.WaitGroup
+	onError    func(error)
+	onPanic    func(any)
+	dispatcher map[string]func(*lwsMessageContent)
 }
 
-func (ws lcuWebsocket) subscribe(event string, handler func(interface{})) error {
+type lwsMessageContent struct {
+	Data      any    `json:"data"`
+	EventType string `json:"eventType"`
+	Uri       string `json:"uri"`
+}
+
+// Subscribe 订阅一个客户端事件。
+//
+// event: 事件
+//
+// handler: 回调函数
+func (ws *lcuWebsocket) Subscribe(event string, handler func(*lwsMessageContent)) error {
 	err := ws.conn.WriteJSON([]interface{}{5, event})
 	if err != nil {
 		return err
@@ -24,7 +37,8 @@ func (ws lcuWebsocket) subscribe(event string, handler func(interface{})) error 
 	return nil
 }
 
-func (ws lcuWebsocket) unsubscribe(event string) error {
+// Unsubscribe 取消订阅一个客户端事件。
+func (ws *lcuWebsocket) Unsubscribe(event string) error {
 	err := ws.conn.WriteJSON([]interface{}{6, event})
 	if err != nil {
 		return err
@@ -39,10 +53,8 @@ func (ws lcuWebsocket) unsubscribe(event string) error {
 //
 // onError: 错误回调，可为nil
 //
-// onUnmarshalError: 解析错误回调，返回true继续解析，false结束解析，为nil则默认为true
-//
-// 返回错误
-func (lcu *lcuClient) StartWebsocket(onError func(error), onUnmarshalError func(message string) bool) error {
+// onPanic: 异常回调，可为nil
+func (lcu *lcuClient) StartWebsocket(onError func(error), onPanic func(any)) (*lcuWebsocket, error) {
 	dialer := websocket.Dialer{
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true, // 跳过证书验证
@@ -54,7 +66,7 @@ func (lcu *lcuClient) StartWebsocket(onError func(error), onUnmarshalError func(
 	)
 	if err != nil {
 		fmt.Println("连接失败")
-		return err
+		return nil, err
 	}
 
 	if onError == nil {
@@ -62,55 +74,56 @@ func (lcu *lcuClient) StartWebsocket(onError func(error), onUnmarshalError func(
 			fmt.Printf("Websocket错误: %v\n", err)
 		}
 	}
-	if onUnmarshalError == nil {
-		onUnmarshalError = func(message string) bool {
-			return true
+	if onPanic == nil {
+		onPanic = func(recover any) {
+			fmt.Printf("Websocket异常: %v\n", recover)
 		}
 	}
-	lcu.websocket = lcuWebsocket{
-		conn:             conn,
-		onError:          onError,
-		onUnmarshalError: onUnmarshalError,
-		dispatcher:       make(map[string]func(interface{})),
+	ws := &lcuWebsocket{
+		conn:       conn,
+		wg:         new(sync.WaitGroup),
+		onError:    onError,
+		onPanic:    onPanic,
+		dispatcher: make(map[string]func(*lwsMessageContent)),
 	}
 
-	go lcu.websocket.listen()
+	go ws.listen()
 
-	return nil
+	return ws, nil
 }
 
-func (ws lcuWebsocket) listen() {
+func (ws *lcuWebsocket) listen() {
+	ws.wg.Add(1)
+	defer func() {
+		ws.wg.Done()
+		if r := recover(); r != nil {
+			ws.onPanic(r)
+		}
+	}()
+
 	for {
 		_, message, err := ws.conn.ReadMessage()
 		if err != nil {
 			ws.onError(err)
 			continue
 		}
+		if len(message) == 0 {
+			continue
+		}
 
-		proto := new([]interface{})
+		proto := new([]any)
+		// The structure of proto message like: [code.(int), event.(string), data.(lwsMessageContent)]
 		err = json.Unmarshal(message, &proto)
 		if err != nil {
-			if ws.onUnmarshalError(string(message)) {
-				continue
-			} else {
-				break
-			}
+			ws.onError(err)
+			continue
 		}
-		ws.dispatcher[(*proto)[1].(string)]((*proto)[2])
+
+		var msgContent lwsMessageContent
+		t := (*proto)[2].(map[string]any)
+		msgContent.Data = t["data"]
+		msgContent.EventType = t["eventType"].(string)
+		msgContent.Uri = t["uri"].(string)
+		ws.dispatcher[(*proto)[1].(string)](&msgContent)
 	}
-	ws.conn.Close()
-}
-
-// Subscribe 订阅一个客户端事件。
-//
-// event: 事件
-//
-// handler: 回调函数
-func (lcu *lcuClient) Subscribe(event string, handler func(interface{})) error {
-	return lcu.websocket.subscribe(event, handler)
-}
-
-// Unsubscribe 取消订阅一个客户端事件。
-func (lcu *lcuClient) Unsubscribe(event string) error {
-	return lcu.websocket.unsubscribe(event)
 }

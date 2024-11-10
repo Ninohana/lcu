@@ -17,9 +17,8 @@ import (
 // lcuClient 封装了 League client API
 type lcuClient struct {
 	*http.Client
-	Port      string
-	Auth      BasicAuth
-	websocket lcuWebsocket
+	Port string
+	Auth BasicAuth
 }
 
 // BasicAuth 鉴权信息

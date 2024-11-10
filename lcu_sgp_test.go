@@ -31,21 +31,25 @@ func TestNewLcuClient(t *testing.T) {
 	}
 	prettyPrint(summoner)
 
-	_ = lcu.StartWebsocket(nil, nil)
+	lws, _ := lcu.StartWebsocket(nil, nil)
 	//_ = lcuClient.StartWebsocket(func(err error) {
 	//	panic(err)
 	//}, func(message string) bool {
 	//	fmt.Println(message)
 	//	return true
 	//})
-	err = lcu.Subscribe("OnJsonApiEvent", func(data interface{}) {
-		fmt.Println(data)
+	err = lws.Subscribe("OnJsonApiEvent", func(content *lwsMessageContent) {
+		//fmt.Println(content.Uri)
+		fmt.Println(content.Data)
+		//fmt.Println(content.EventType)
 	})
 	if err != nil {
 		t.Errorf("订阅失败")
 	}
 
-	err = lcu.Unsubscribe("OnJsonApiEvent")
+	//lws.wg.Wait()
+
+	err = lws.Unsubscribe("OnJsonApiEvent")
 	if err != nil {
 		t.Errorf("取消订阅失败")
 	}
