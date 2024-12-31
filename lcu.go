@@ -266,3 +266,16 @@ func (lcu *lcuClient) PlayAgain() error {
 	}
 	return nil
 }
+
+func (lcu *lcuClient) SetSummonerProfile() error {
+ url := "/lol-summoner/v1/current-summoner/summoner-profile"
+	_, errRes := httpPost(lcu.Client, url, nil)
+	if errRes != nil {
+		return &responseError{Message: errRes.Message}
+	}
+	return nil
+//{
+//            'key': 'backgroundSkinAugments',
+//            'value': contentId
+//       }
+}
