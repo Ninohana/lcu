@@ -206,6 +206,17 @@ func (lcu *lcuClient) GetRoflsDefaultPath() string {
 	return strings.ReplaceAll(string(res), `"`, "")
 }
 
+// GetCurrentSummoner 获取当前召唤师信息
+func (lcu *lcuClient) GetCurrentSummoner() (summoner *Summoner, err error) {
+	url := "/lol-summoner/v1/current-summoner"
+	res, errRes := httpGet(lcu.Client, url)
+	if errRes != nil {
+		return nil, &responseError{Message: errRes.Message}
+	}
+	_ = json.Unmarshal(res, &summoner)
+	return summoner, nil
+}
+
 func (lcu *lcuClient) GetCurrentSummonerProfile() (summonerProfile *SummonerProfile, err error) {
 	url := "/lol-summoner/v1/current-summoner/summoner-profile"
 	res, errRes := httpGet(lcu.Client, url)
