@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var lcu = NewLcuClient("52935", BasicAuth{"riot", "-_lSMU55LXv9xVqD2g6nUQ"})
+var lcu = NewLcuClient("50832", BasicAuth{"riot", "5Kit_e3xHOFAg1u_DcCjPA"})
 
 func TestLcu_getServiceEndpoint(t *testing.T) {
 	tests := []struct {
@@ -283,6 +283,51 @@ func TestLcu_GetSelectSession(t *testing.T) {
 			if gotSelectSession == nil && tt.want {
 				t.Errorf("GetSelectSession() gotSelectSession = %v, want %v", gotSelectSession, tt.want)
 			}
+		})
+	}
+}
+
+func Test_lcuClient_GetFriendCounts(t *testing.T) {
+	tests := []struct {
+		name    string
+		want    bool
+		wantErr bool
+	}{
+		{"base", true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotFriendCounts, err := lcu.GetFriendCounts()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetFriendCounts() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if gotFriendCounts == nil && tt.want {
+				t.Errorf("GetFriendCounts() gotFriendCounts = %v, want %v", gotFriendCounts, tt.want)
+			}
+		})
+	}
+}
+
+func Test_lcuClient_GetFriends(t *testing.T) {
+	tests := []struct {
+		name    string
+		want    bool
+		wantErr bool
+	}{
+		{"base", true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotFriend, err := lcu.GetFriends()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetFriends() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if gotFriend == nil && tt.want {
+				t.Errorf("GetFriends() gotFriend = %v, want %v", gotFriend, tt.want)
+			}
+			prettyPrint(gotFriend)
 		})
 	}
 }

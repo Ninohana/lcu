@@ -291,3 +291,25 @@ func (lcu *lcuClient) SetSummonerProfile(contentId int) error {
 	}
 	return nil
 }
+
+// GetFriendCounts 获取好友数量信息。
+func (lcu *lcuClient) GetFriendCounts() (friendCounts *FriendCounts, err error) {
+	url := "/lol-chat/v1/friend-counts"
+	res, errRes := httpGet(lcu.Client, url)
+	if errRes != nil {
+		return nil, &responseError{Message: errRes.Message}
+	}
+	_ = json.Unmarshal(res, &friendCounts)
+	return friendCounts, nil
+}
+
+// GetFriends 获取好友列表。
+func (lcu *lcuClient) GetFriends() (friends []Friend, err error) {
+	url := "/lol-chat/v1/friends"
+	res, errRes := httpGet(lcu.Client, url)
+	if errRes != nil {
+		return nil, &responseError{Message: errRes.Message}
+	}
+	_ = json.Unmarshal(res, &friends)
+	return friends, nil
+}

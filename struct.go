@@ -9,6 +9,47 @@ type SgpToken struct {
 	Subject     string `json:"subject"`
 	Token       string `json:"token"`
 }
+type FriendCounts struct {
+	NumFriends              int `json:"numFriends"`
+	NumFriendsAvailable     int `json:"numFriendsAvailable"`
+	NumFriendsAway          int `json:"numFriendsAway"`
+	NumFriendsInChampSelect int `json:"numFriendsInChampSelect"`
+	NumFriendsInGame        int `json:"numFriendsInGame"`
+	NumFriendsInQueue       int `json:"numFriendsInQueue"`
+	NumFriendsMobile        int `json:"numFriendsMobile"`
+	NumFriendsOnline        int `json:"numFriendsOnline"`
+}
+
+type Friend struct {
+	Availability            string `json:"availability"`
+	DisplayGroupId          int    `json:"displayGroupId"`
+	DisplayGroupName        string `json:"displayGroupName"`
+	GameName                string `json:"gameName"`
+	GameTag                 string `json:"gameTag"`
+	GroupId                 int    `json:"groupId"`
+	GroupName               string `json:"groupName"`
+	Icon                    int    `json:"icon"`
+	Id                      string `json:"id"`
+	IsP2PConversationMuted  bool   `json:"isP2PConversationMuted"`
+	LastSeenOnlineTimestamp string `json:"lastSeenOnlineTimestamp"`
+	Lol                     struct {
+		AdditionalProp1 string `json:"additionalProp1"`
+		AdditionalProp2 string `json:"additionalProp2"`
+		AdditionalProp3 string `json:"additionalProp3"`
+	} `json:"lol"`
+	Name          string `json:"name"`
+	Note          string `json:"note"`
+	Patchline     string `json:"patchline"`
+	Pid           string `json:"pid"`
+	PlatformId    string `json:"platformId"`
+	Product       string `json:"product"`
+	ProductName   string `json:"productName"`
+	Puuid         string `json:"puuid"`
+	StatusMessage string `json:"statusMessage"`
+	Summary       string `json:"summary"`
+	SummonerId    int    `json:"summonerId"`
+	Time          int    `json:"time"`
+}
 
 type Summoner struct {
 	AccountId                   int64  `json:"accountId"`
