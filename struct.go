@@ -51,6 +51,26 @@ type Friend struct {
 	Time          int    `json:"time"`
 }
 
+/*
+lol lobby
+*/
+
+type CustomGameInfo struct {
+	FilledPlayerSlots    int    `json:"filledPlayerSlots"`
+	FilledSpectatorSlots int    `json:"filledSpectatorSlots"`
+	GameType             string `json:"gameType"`
+	HasPassword          bool   `json:"hasPassword"`
+	Id                   int    `json:"id"`
+	LobbyName            string `json:"lobbyName"`
+	MapId                int    `json:"mapId"`
+	MaxPlayerSlots       int    `json:"maxPlayerSlots"`
+	MaxSpectatorSlots    int    `json:"maxSpectatorSlots"`
+	OwnerSummonerName    string `json:"ownerSummonerName"`
+	PartyId              string `json:"partyId"`
+	PassbackUrl          string `json:"passbackUrl"`
+	SpectatorPolicy      string `json:"spectatorPolicy"`
+}
+
 type Summoner struct {
 	AccountId                   int64  `json:"accountId"`
 	DisplayName                 string `json:"displayName"`

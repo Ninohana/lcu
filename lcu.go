@@ -313,3 +313,18 @@ func (lcu *lcuClient) GetFriends() (friends []Friend, err error) {
 	_ = json.Unmarshal(res, &friends)
 	return friends, nil
 }
+
+/*
+*lol lobby
+ */
+
+// GetCustomGames 获取大厅自定义房间列表。
+func (lcu *lcuClient) GetCustomGames() (customGames *CustomGameInfo, err error) {
+	url := "/lol-lobby/v1/custom-games"
+	res, errRes := httpGet(lcu.Client, url)
+	if errRes != nil {
+		return nil, &responseError{Message: errRes.Message}
+	}
+	_ = json.Unmarshal(res, &customGames)
+	return customGames, nil
+}
